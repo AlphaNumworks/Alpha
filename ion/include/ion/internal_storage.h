@@ -13,7 +13,7 @@ namespace Ion {
  *
  * A record's fullName is baseName.extension.
  *
- * If a record is locked, it is not accessible in exam mode.
+ * If a record is lockable and locked, it is not accessible in exam mode.
  *
  * The lock value (lockv) is a uint8_t, where the first bit (lockv & 1u)
  * indicates whether the record is lockable, and the second bit (lockv & (1u << 1))
@@ -25,6 +25,7 @@ class StorageDelegate;
 class InternalStorage {
 public:
   typedef uint16_t record_size_t;
+  typedef uint8_t  lockv_size_t;
 
   static constexpr char eqExtension[] = "eq";
   static constexpr char expExtension[] = "exp";
@@ -103,8 +104,8 @@ public:
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation
-  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * data, size_t size);
-  Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size);
+  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * data, size_t size, bool lockable = true);
+  Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool lockable = true);
 
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
@@ -130,6 +131,7 @@ protected:
   /* Getters on address in buffer */
   char * pointerOfRecord(const Record record) const;
   record_size_t sizeOfRecordStarting(char * start) const;
+  lockv_size_t  lockvOfRecordStarting(char * start) const;
   const char * fullNameOfRecordStarting(char * start) const;
   const void * valueOfRecordStarting(char * start) const;
   void destroyRecord(const Record record);
@@ -156,14 +158,15 @@ private:
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
 
   /* Getters/Setters on recordID */
-  const char * fullNameOfRecord(const Record record);
+  const char *        fullNameOfRecord(const Record record);
   Record::ErrorStatus setFullNameOfRecord(const Record record, const char * fullName);
   Record::ErrorStatus setBaseNameWithExtensionOfRecord(const Record record, const char * baseName, const char * extension);
-  Record::Data valueOfRecord(const Record record);
+  Record::Data        valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
 
   /* Overriders */
   size_t overrideSizeAtPosition(char * position, record_size_t size);
+  size_t overrideLockvAtPosition(char * position, lockv_size_t lockv);
   size_t overrideFullNameAtPosition(char * position, const char * fullName);
   size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, const char * extension);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
