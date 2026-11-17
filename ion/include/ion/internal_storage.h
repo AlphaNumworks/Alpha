@@ -119,6 +119,9 @@ public:
   void destroyAllRecords();
   void destroyRecordWithBaseNameAndExtension(const char * baseName, const char * extension);
   void destroyRecordsWithExtension(const char * extension);
+  void lockRecords();
+  void unlockRecords();
+  void destroyNotLockedRecords();
 
   // Useful
   static bool FullNameCompliant(const char * name);
@@ -146,11 +149,17 @@ protected:
     char * m_recordStart;
   };
   RecordIterator begin() const {
-    if (sizeOfRecordStarting((char *)m_buffer) == 0) {
+    char * first = (char *)m_buffer;
+    if (sizeOfRecordStarting(first) == 0) {
       return nullptr;
     }
-    return RecordIterator((char *)m_buffer);
-  };
+    RecordIterator it(first);
+    lockv_size_t lockv = *(lockv_size_t *)(m_buffer + sizeof(record_size_t));
+    if ((lockv & 0b11u) == 0b11u) {
+      ++it;
+    }
+    return it;
+  }
   RecordIterator end() const { return RecordIterator(nullptr); }
 
 private:

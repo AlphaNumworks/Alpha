@@ -341,6 +341,56 @@ void InternalStorage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
+void InternalStorage::lockRecords() {
+  for (char * p : *this) {
+    lockv_size_t lockv = InternalStorage::lockvOfRecordStarting(p);
+    if (lockv & 1u) {  // Lokcable
+      lockv |= (1u << 1);
+      overrideLockvAtPosition(p + sizeof(record_size_t), lockv);
+    }
+  }
+}
+
+void InternalStorage::unlockRecords() {
+  char * p = m_buffer;
+  for (; p < m_buffer + k_storageSize;) {
+    record_size_t recordSize = sizeOfRecordStarting(p);
+    if (recordSize == 0) {
+      break;
+    }
+    lockv_size_t lockv = InternalStorage::lockvOfRecordStarting(p);
+    if (lockv & 1u) {  // Lokcable
+      lockv &= (lockv_size_t)~(1u << 1);
+      overrideLockvAtPosition(p + sizeof(record_size_t), lockv);
+    }
+    p += recordSize;
+  }
+}
+
+void InternalStorage::destroyNotLockedRecords() {
+  char * p = m_buffer;
+  char * previousLocation = p;
+
+  // Cannot use for (char * p : *this) cause we will move all locked record to the begin
+  for (;p < m_buffer + k_storageSize;) {
+    record_size_t recordSize = sizeOfRecordStarting(p);
+    if (recordSize == 0) {
+      break;
+    }
+    lockv_size_t lockv = lockvOfRecordStarting(p);
+    if ((lockv & 1u) && (lockv & (1u << 1))) {  // Lockable && locked
+      // Here is the magic. A locked record can only slide left.
+      memmove(previousLocation, p, recordSize);
+      previousLocation += recordSize;
+    }
+    p += recordSize;
+  }
+  InternalStorage::overrideSizeAtPosition(previousLocation, 0);
+  m_lastRecordRetrievedPointer = nullptr;
+  m_lastRecordRetrieved = Record(nullptr);
+  notifyChangeToDelegate();
+}
+
 InternalStorage::InternalStorage() {
   m_magicHeader = Magic;
   m_magicFooter = Magic;
@@ -583,8 +633,12 @@ bool InternalStorage::FullNameHasExtension(const char * fullName, const char * e
 
 char * InternalStorage::endBuffer() {
   char * currentBuffer = m_buffer;
-  for (char * p : *this) {
-    currentBuffer += sizeOfRecordStarting(p);
+  for (;currentBuffer < m_buffer + k_storageSize;) {
+    record_size_t size = sizeOfRecordStarting(currentBuffer);
+    if (size == 0) {
+      break;
+    }
+    currentBuffer += size;
   }
   return currentBuffer;
 }
@@ -649,10 +703,15 @@ InternalStorage::Record InternalStorage::privateRecordAndExtensionOfRecordBaseNa
 
 InternalStorage::RecordIterator & InternalStorage::RecordIterator::operator++() {
   assert(m_recordStart);
-  record_size_t size = StorageHelper::unalignedShort(m_recordStart);
-  char * nextRecord = m_recordStart+size;
-  record_size_t newRecordSize = StorageHelper::unalignedShort(nextRecord);
-  m_recordStart = (newRecordSize == 0 ? nullptr : nextRecord);
+  lockv_size_t lockv;
+  do {
+    record_size_t size = StorageHelper::unalignedShort(m_recordStart);
+    char * nextRecord = m_recordStart + size;
+    m_recordStart = (StorageHelper::unalignedShort(nextRecord) == 0) ? nullptr : nextRecord;
+    if (m_recordStart) {
+      lockv = *((uint8_t *)m_recordStart + sizeof(record_size_t));
+    }
+  } while (m_recordStart && (lockv & 0b11u) == 0b11u);
   return *this;
 }
 
