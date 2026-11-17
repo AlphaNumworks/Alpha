@@ -7,10 +7,18 @@
 
 namespace Ion {
 
-/* Storage : | Magic |             Record1                 |            Record2                  | ... | Magic |
- *           | Magic | Size1(uint16_t) | FullName1 | Body1 | Size2(uint16_t) | FullName2 | Body2 | ... | Magic |
+/**
+ * Storage : | Magic |                       Record1                         |                          Record2                      | ... | Magic |
+ *           | Magic | Size1(uint16_t) | Lockv1(uint8_t) | FullName1 | Body1 | Size2(uint16_t) | Lockv2(uint8_t) | FullName2 | Body2 | ... | Magic |
  *
- * A record's fullName is baseName.extension. */
+ * A record's fullName is baseName.extension.
+ *
+ * If a record is locked, it is not accessible in exam mode.
+ *
+ * The lock value (lockv) is a uint8_t, where the first bit (lockv & 1u)
+ * indicates whether the record is lockable, and the second bit (lockv & (1u << 1))
+ * indicates the current lock state (0 = unlocked, 1 = locked).
+ */
 
 class StorageDelegate;
 

@@ -164,7 +164,7 @@ InternalStorage::Record::ErrorStatus InternalStorage::notifyFullnessToDelegate()
 InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
   size_t recordSize = sizeOfRecordWithFullName(fullName, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
-   return notifyFullnessToDelegate();
+    return notifyFullnessToDelegate();
   }
   if (isFullNameTaken(fullName)) {
     return Record::ErrorStatus::NameTaken;
