@@ -104,8 +104,8 @@ public:
   static bool FullNameHasExtension(const char * fullName, const char * extension, size_t extensionLength);
 
   // Record creation
-  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * data, size_t size, bool lockable = true);
-  Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool lockable = true);
+  Record::ErrorStatus createRecordWithFullName(const char * fullName, const void * data, size_t size, bool lockable = false);
+  Record::ErrorStatus createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool lockable = false);
 
   // Record getters
   bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
