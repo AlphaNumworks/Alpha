@@ -264,6 +264,14 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     }
     return true;
   }
+#ifndef NDEBUG
+  // DEBUG: the simulator has no USB plug, so Shift+EXE opens the "disable exam mode" pop-up.
+  if (event == Ion::Events::ShiftEXE && GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
+    displayExamModePopUp(GlobalPreferences::ExamMode::Off);
+    window()->redraw();
+    return true;
+  }
+#endif
   // If key home or key back is pressed, we switch to the home app.
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
     switchTo(appSnapshotAtIndex(0));
@@ -468,7 +476,13 @@ void AppsContainer::redrawWindow(bool force) {
 
 void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
-  reset();
+  // reset();
+  Ion::Storage::sharedStorage()->lockRecords();
+  Ion::Storage::sharedStorage()->destroyNotLockedRecords();
+  Clipboard::sharedClipboard()->reset();
+  for (int i = 0; i < numberOfApps(); i++) {
+    appSnapshotAtIndex(i)->reset();
+  }
   Ion::LED::setColor(KDColorRed);
   /* The Dutch exam mode LED is supposed to be orange but we can only make
    * blink "pure" colors: with RGB leds on or off (as the PWM is used for

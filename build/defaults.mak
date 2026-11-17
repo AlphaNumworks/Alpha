@@ -26,6 +26,8 @@ SFLAGS += -fsanitize=address
 LDFLAGS += -fsanitize=address
 endif
 
+# ifeq ($())
+
 # Flags - Header search path
 SFLAGS += -Ilib -I.
 

@@ -49,14 +49,14 @@ int Storage::numberOfRecordsWithExtension(const char * extension) {
   return InternalStorage::numberOfRecordsWithExtension(extension) - trashRecord;
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size) {
+Storage::Record::ErrorStatus Storage::createRecordWithFullName(const char * fullName, const void * data, size_t size, bool lockable) {
   emptyTrash();
-  return InternalStorage::createRecordWithFullName(fullName, data, size);
+  return InternalStorage::createRecordWithFullName(fullName, data, size, lockable);
 }
 
-Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size) {
+Storage::Record::ErrorStatus Storage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool lockable) {
   emptyTrash();
-  return InternalStorage::createRecordWithExtension(baseName, extension, data, size);
+  return InternalStorage::createRecordWithExtension(baseName, extension, data, size, lockable);
 }
 
 bool Storage::hasRecord(Record r) {
