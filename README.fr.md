@@ -465,9 +465,9 @@ Important: n'oubliez pas l'argument `--recursive` parce qu'Upsilon dépend de su
 Aussi, vous pouvez changer le nombre de processus de compilation en parallèles en changeant le nombre après l'argument `-j`.
 N'oubliez pas de mettre votre nom à la place `{Votre nom, maximum 15 caractères}`. Si vous n'en voulez pas, enlevez l'argument `OMEGA_USERNAME`.
 
-Si vous avez besoin d'aide, n'hésitez pas à rejoindre notre serveur Discord : <https://discord.gg/ABWn3GhVb>
+Si vous avez besoin d'aide, n'hésitez pas à rejoindre notre serveur Discord : <https://discord.gg/VhdKYBqKr7>
 
-<a href="https://discord.gg/ABWn3GhVb"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86287349-54ef5800-bbe8-11ea-80c1-34eb1f93eebd.png" /></p></a>
+<a href="https://discord.gg/VhdKYBqKr7"><p align="center"><img alt="Omega Banner Discord" src="https://user-images.githubusercontent.com/12123721/86287349-54ef5800-bbe8-11ea-80c1-34eb1f93eebd.png" /></p></a>
 ---
 
 ## Liens utiles
