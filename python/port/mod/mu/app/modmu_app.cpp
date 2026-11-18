@@ -110,7 +110,7 @@ mp_obj_t modmu_app_run(
         mp_load_method(scene, MP_QSTR_render, dest);
         mp_call_method_n_kw(0, 0, dest);
 
-        double elapsed = Ion::Timing::millis() - ts;
+        double elapsed = (Ion::Timing::millis() / 1000.0) - ts;
         double waiting = thus->frame_time - elapsed;
         if (waiting > 0) {
             micropython_port_interruptible_msleep(1000 * waiting);
