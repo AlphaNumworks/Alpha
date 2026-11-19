@@ -101,6 +101,8 @@ mp_obj_t modmu_app_run(
     mp_obj_t dest[3];
     double ts      = Ion::Timing::millis() / 1000.0;
     double last_ts = ts;
+    uint64_t t_update = 0, t_render = 0, worst = 0, worst_shown = 0;
+    int frames = 0;
 
     thus->is_running = true;
     while (thus->is_running) {
@@ -114,14 +116,30 @@ mp_obj_t modmu_app_run(
 
         if (scene == mp_const_none) break;
 
+        uint64_t t0 = Ion::Timing::millis();
         mp_load_method(scene, MP_QSTR_update, dest);
         dest[2] = thus_obj;
         mp_call_method_n_kw(1, 0, dest);
+        uint64_t t1 = Ion::Timing::millis();
 
         mp_load_method(scene, MP_QSTR_render, dest);
         mp_call_method_n_kw(0, 0, dest);
-        
+        uint64_t t2 = Ion::Timing::millis();
+
         if (thus->debug) {
+            // NOTE: Compute times for render(), update() (current scene) and show worst frame
+            t_update = t1 - t0;
+            t_render = t2 - t1;
+            if (t2 - t0 > worst) {
+                worst = t2 - t0;
+            }
+            ++frames;
+            if (frames >= 60) {
+                worst_shown = worst;
+                worst = 0;
+                frames = 0;
+            }
+
             double dt = ts - last_ts;
             const KDFont *font = KDFont::SmallFont;
             VSTR_FIXED(fps_str, 24);
@@ -137,6 +155,10 @@ mp_obj_t modmu_app_run(
             VSTR_FIXED(current_scene_str, 32 + 8);
             vstr_printf(&current_scene_str, "Scene: %.*s", 32, mp_obj_get_type_str(scene));
             KDIonContext::sharedContext()->drawString(vstr_null_terminated_str(&current_scene_str), KDPoint(0, font->glyphSize().height() * 2), font);
+
+            VSTR_FIXED(t_str, 32);
+            vstr_printf(&t_str, "U:%dms R:%dms W:%dms", (int)t_update, (int)t_render, (int)worst_shown);
+            KDIonContext::sharedContext()->drawString(vstr_null_terminated_str(&t_str), KDPoint(0, font->glyphSize().height() * 3), font);
         }
 
         double elapsed = (Ion::Timing::millis() / 1000.0) - ts;

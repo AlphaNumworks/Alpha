@@ -10,11 +10,11 @@
 - [ ] Custom application order AND hideable applications
 - [X] New theme
 - [ ] New DA / Logo / Name ?? (delta)
-- [ ] Debug mode
+- [X] Debug mode
     - [X] FPS / Targetted FPS
     - [X] GC state (used / total (percentage))
-    - [ ] Time for : update(), render()
-    - [ ] Worst frame
+    - [X] Time for : update(), render()
+    - [X] Worst frame
     - [X] Current scene name
 
 ## Website
