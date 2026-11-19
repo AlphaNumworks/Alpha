@@ -1,4 +1,6 @@
 #include "ion/timing.h"
+#include "kandinsky/ion_context.h"
+#include <string>
 extern "C" {
     #include "mod/mu/events/bus/modmu_eventbus.h"
     #include "mod/mu/keyboard/modmu_keyboard.h"
@@ -24,6 +26,7 @@ typedef struct modmu_app_obj_s {
     mp_obj_t      keyboard;              //!< Keyboard
     mp_obj_t      events;                //!< Event bus
     bool          is_running = false;    //!< Is the app running
+    bool          debug      = false;    //!< Is the app in debug mode
     int           tickrate   = 30;       //!< The desired tickrate
     float         frame_time = 1.0 / 30; //!< The tickrate
 
@@ -36,10 +39,11 @@ mp_obj_t modmu_app_make_new(
     const mp_obj_t *args
 )
 {
-    mp_arg_check_num(n_args, n_kw, 0, 0, false);
+    mp_arg_check_num(n_args, n_kw, 0, 1, false);
 
     modmu_app_obj_t* thus = mp_obj_malloc(modmu_app_obj_t, type);
     thus->is_running = false;
+    thus->debug      = (n_args > 0 && args[0] == mp_const_true);
     thus->scenemgr   = modmu_scenemgr_make_new(&modmu_scenemgr_type, 0, 0, NULL);
     thus->keyboard   = modmu_keyboard_make_new(&modmu_keyboard_type, 0, 0, NULL);
     thus->events     = modmu_eventbus_make_new(&modmu_eventbus_type, 0, 0, NULL);
@@ -98,6 +102,7 @@ mp_obj_t modmu_app_run(
         ts = Ion::Timing::millis() / 1000.0;
 
         modmu_keyboard_update(thus->keyboard);
+        mp_handle_pending(true);
 
         scene = modmu_scenemgr_current(thus->scenemgr);
 
@@ -109,6 +114,11 @@ mp_obj_t modmu_app_run(
 
         mp_load_method(scene, MP_QSTR_render, dest);
         mp_call_method_n_kw(0, 0, dest);
+        
+        if (thus->debug) {
+            std::string str = "FPS: 30";
+            KDIonContext::sharedContext()->drawString(str.c_str(), KDPoint(0, 0));
+        }
 
         double elapsed = (Ion::Timing::millis() / 1000.0) - ts;
         double waiting = thus->frame_time - elapsed;
