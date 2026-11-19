@@ -1,11 +1,13 @@
 #include "ion/timing.h"
 #include "kandinsky/ion_context.h"
-#include <string>
+#include "port.h"
 extern "C" {
     #include "mod/mu/events/bus/modmu_eventbus.h"
     #include "mod/mu/keyboard/modmu_keyboard.h"
     #include "helpers.h"
     #include "py/qstr.h"
+    #include "py/misc.h"
+    #include "py/gc.h"
     #include "modmu_app.h"
     #include "py/obj.h"
     #include "py/runtime.h"
@@ -43,7 +45,9 @@ mp_obj_t modmu_app_make_new(
 
     modmu_app_obj_t* thus = mp_obj_malloc(modmu_app_obj_t, type);
     thus->is_running = false;
-    thus->debug      = (n_args > 0 && args[0] == mp_const_true);
+    thus->tickrate   = 30;
+    thus->frame_time = 1.0 / 30;
+    thus->debug     = (n_args > 0 && args[0] == mp_const_true);
     thus->scenemgr   = modmu_scenemgr_make_new(&modmu_scenemgr_type, 0, 0, NULL);
     thus->keyboard   = modmu_keyboard_make_new(&modmu_keyboard_type, 0, 0, NULL);
     thus->events     = modmu_eventbus_make_new(&modmu_eventbus_type, 0, 0, NULL);
@@ -95,10 +99,12 @@ mp_obj_t modmu_app_run(
     modmu_app_obj_t* thus = (modmu_app_obj_t*)MP_OBJ_TO_PTR(thus_obj);
     mp_obj_t scene;
     mp_obj_t dest[3];
-    double ts;
+    double ts      = Ion::Timing::millis() / 1000.0;
+    double last_ts = ts;
 
     thus->is_running = true;
     while (thus->is_running) {
+        last_ts = ts;
         ts = Ion::Timing::millis() / 1000.0;
 
         modmu_keyboard_update(thus->keyboard);
@@ -116,14 +122,24 @@ mp_obj_t modmu_app_run(
         mp_call_method_n_kw(0, 0, dest);
         
         if (thus->debug) {
-            std::string str = "FPS: 30";
-            KDIonContext::sharedContext()->drawString(str.c_str(), KDPoint(0, 0));
+            double dt = ts - last_ts;
+            const KDFont *font = KDFont::SmallFont;
+            VSTR_FIXED(fps_str, 24);
+            vstr_printf(&fps_str, "FPS: %d / %d", dt > 0 ? (int)(1.0 / dt + 0.5) : 0, thus->tickrate);
+            KDIonContext::sharedContext()->drawString(vstr_null_terminated_str(&fps_str), KDPoint(0, 0), font);
+
+            gc_info_t gc;
+            gc_info(&gc);
+            VSTR_FIXED(gc_str, 32);
+            vstr_printf(&gc_str, "GC: %dK / %dK (%d%%)", (int)(gc.used / 1024), (int)(gc.total / 1024), gc.total ? (int)(gc.used * 100 / gc.total) : 0);
+            KDIonContext::sharedContext()->drawString(vstr_null_terminated_str(&gc_str), KDPoint(0, font->glyphSize().height()), font);
         }
 
         double elapsed = (Ion::Timing::millis() / 1000.0) - ts;
         double waiting = thus->frame_time - elapsed;
         if (waiting > 0) {
-            micropython_port_interruptible_msleep(1000 * waiting);
+            // NOTE:: Previous function scaned again
+            Ion::Timing::msleep(1000 * waiting);
         }
     }
     return mp_const_none;

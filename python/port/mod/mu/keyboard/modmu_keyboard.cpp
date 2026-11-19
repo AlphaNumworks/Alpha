@@ -4,6 +4,7 @@ extern "C" {
     #include "py/runtime.h"
     #include "py/obj.h"
     #include "layout_keyboard.h"
+    #include "mphalport.h"
 }
 
 typedef struct modmu_keyboard_obj_s {
@@ -74,8 +75,10 @@ mp_obj_t modmu_keyboard_update(
     thus->previous_scan = thus->current_scan;
     thus->current_scan = Ion::Keyboard::scan();
 
-    // ? Is needed ?
-    micropython_port_interrupt_if_needed();
+    // NOTE: Do not rescan again
+    if (thus->current_scan.keyDown(static_cast<Ion::Keyboard::Key>(mp_interrupt_char))) {
+        mp_keyboard_interrupt();
+    }
 
     return mp_const_none;
 }
