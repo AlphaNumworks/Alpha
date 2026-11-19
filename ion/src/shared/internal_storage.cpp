@@ -1,4 +1,3 @@
-#include <cstdint>
 #include <ion.h>
 #include <string.h>
 #include <assert.h>
