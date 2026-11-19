@@ -81,6 +81,7 @@ public:
     Data value() const;
     ErrorStatus setValue(Data data);
     void destroy();
+    uint32_t fullNameCRC32() const { return m_fullNameCRC32; };
   private:
     Record(const char * basename, int basenameLength, const char * extension, int extensionLength);
     uint32_t m_fullNameCRC32;
