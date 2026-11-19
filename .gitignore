@@ -22,3 +22,4 @@ null/
 # Env
 .venv/
 .env/
+*.log
