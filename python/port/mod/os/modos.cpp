@@ -114,6 +114,7 @@ mp_obj_t modos_rename(mp_obj_t o_old_name, mp_obj_t o_new_name) {
 mp_obj_t modos_listdir(void) {
   mp_obj_t list = mp_obj_new_list(0, NULL);
 
+  // NOTE: Mhhh it could be dangerous if it list locked records
   for(size_t i = 0; i < (size_t)Ion::Storage::sharedStorage()->numberOfRecords(); i++) {
     Ion::Storage::Record record = Ion::Storage::sharedStorage()->recordAtIndex(i);
     size_t file_name_length = strlen(record.fullName());
