@@ -15,7 +15,7 @@
     - [X] GC state (used / total (percentage))
     - [ ] Time for : update(), render()
     - [ ] Worst frame
-    - [ ] Current scene name
+    - [X] Current scene name
 
 ## Website
 - [ ] A website (w/ github pages?)

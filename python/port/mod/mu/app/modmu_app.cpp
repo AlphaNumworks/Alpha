@@ -133,6 +133,10 @@ mp_obj_t modmu_app_run(
             VSTR_FIXED(gc_str, 32);
             vstr_printf(&gc_str, "GC: %dK / %dK (%d%%)", (int)(gc.used / 1024), (int)(gc.total / 1024), gc.total ? (int)(gc.used * 100 / gc.total) : 0);
             KDIonContext::sharedContext()->drawString(vstr_null_terminated_str(&gc_str), KDPoint(0, font->glyphSize().height()), font);
+
+            VSTR_FIXED(current_scene_str, 32 + 8);
+            vstr_printf(&current_scene_str, "Scene: %s", mp_obj_get_type_str(scene));
+            KDIonContext::sharedContext()->drawString(vstr_null_terminated_str(&current_scene_str), KDPoint(0, font->glyphSize().height() * 2), font);
         }
 
         double elapsed = (Ion::Timing::millis() / 1000.0) - ts;
