@@ -6,6 +6,22 @@
 
 namespace Ion {
 
+/*
+ *
+ * The locktable is a record containing:
+ * 
+ * - Its size (uint16_t)
+ * - Its name (lockv.cfg), '\0' terminated
+ * - Multiple entries, each composed of "CRC32" of record they lock + the lockv (uint8_t)
+ * - For now, only the first bit of the lockv is used, it's "Lockable by exam mode"
+ * 
+ * - Maybe later games or other apps would be able to lock some files (save files ?) (but it would take a refactor of lock...)
+ * 
+ * - On locking, internal storage check if a record is lockable. If yes, the record is move to the last postion, the lockOffest is update by the
+ *   size of the record, and the last ptr is update by the same size.
+ *
+ */
+
 class LockTable {
   static constexpr char   k_locktableName[] = "lockv.cfg";
 
