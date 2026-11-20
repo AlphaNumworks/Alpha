@@ -11,7 +11,7 @@
 - [ ] Lockable records (python script), hidden in exam mode
     - [X] Records are locked (not shown on exam mode), and unlocked after exam mode
     - [X] Records lockable not listables with os.listdir() and inaccessibles with open("r").
-    - [ ] New records cannot be named the same as a locked record
+    - [X] New records cannot be named the same as a locked record
     - [ ] Records from official epsilon site having a auto lockv, and removing lockv on retrieving
 - [ ] Custom application order AND hideable applications
 - [X] New theme

@@ -26,6 +26,7 @@ bool LockTable::makeLockable(
     InternalStorage::Record r
 )
 {
+    if (r == InternalStorage::Record(k_locktableName)) return true;
     char * ptr = lockvPtr(r);
 
     if (ptr == nullptr) {
@@ -42,9 +43,7 @@ bool LockTable::makeNotLockable(
     InternalStorage::Record r
 )
 {
-    if (r.isNull()) {
-        return false;
-    }
+    if (r == InternalStorage::Record(k_locktableName)) return false;
 
     char * ptr = lockvPtr(r);
 
