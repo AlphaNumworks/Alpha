@@ -89,32 +89,25 @@ char * LockTable::createLockv(
         return nullptr;
     }
 
-    InternalStorage::Record table = Ion::Storage::sharedStorage()->recordNamed(k_locktableName);
+    Ion::Storage * storage        = Ion::Storage::sharedStorage();
+    InternalStorage::Record table = storage->recordNamed(k_locktableName);
 
-    uint8_t buffer[k_maxEntries * k_locktableEntrySize];
-    size_t size = 0;
-
-    if (!table.isNull()) {
-        InternalStorage::Record::Data v = table.value();
-        size = (v.size / k_locktableEntrySize) * k_locktableEntrySize;
-        if (size + k_locktableEntrySize > sizeof(buffer)) {
-            return nullptr;
-        }
-        memcpy(buffer, v.buffer, size);
-    }
-
+    uint8_t  entry[k_locktableEntrySize];
     uint32_t crc = r.fullNameCRC32();
-    memcpy(buffer + size, &crc, sizeof(uint32_t));
-    buffer[size + sizeof(uint32_t)] = 0;
-    size += k_locktableEntrySize;
+    memcpy(entry, &crc, sizeof(uint32_t));
+    entry[sizeof(uint32_t)] = 0;
+
+    if (!table.isNull() && table.value().size % k_locktableEntrySize != 0) {
+        table.destroy();
+        table = InternalStorage::Record();
+    }
 
     InternalStorage::Record::ErrorStatus status;
 
     if (table.isNull()) {
-        status = Ion::Storage::sharedStorage()->createRecordWithFullName(k_locktableName, buffer, size);
+        status = storage->createRecordWithFullName(k_locktableName, entry, sizeof(entry));
     } else {
-        InternalStorage::Record::Data data = {.buffer = buffer, .size = size};
-        status = table.setValue(data);
+        status = storage->appendToRecord(table, entry, sizeof(entry));
     }
     if (status != InternalStorage::Record::ErrorStatus::None) {
         return nullptr;

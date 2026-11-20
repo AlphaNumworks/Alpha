@@ -22,6 +22,7 @@ namespace Ion {
  */
 
 class StorageDelegate;
+class LockTable;
 
 class InternalStorage {
 public:
@@ -157,6 +158,8 @@ protected:
   RecordIterator end() const { return RecordIterator(nullptr); }
 
 private:
+  friend class LockTable;
+
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
 
@@ -166,6 +169,7 @@ private:
   Record::ErrorStatus setBaseNameWithExtensionOfRecord(const Record record, const char * baseName, const char * extension);
   Record::Data        valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
+  Record::ErrorStatus appendToRecord(const Record record, const void * bytes, size_t size);
 
   /* Overriders */
   size_t overrideSizeAtPosition(char * position, record_size_t size);

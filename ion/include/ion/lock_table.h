@@ -8,7 +8,6 @@ namespace Ion {
 
 class LockTable {
   static constexpr char   k_locktableName[] = "lockv.cfg";
-  static constexpr size_t k_maxEntries = 64;
 
 public:
   typedef uint8_t lockv_t;

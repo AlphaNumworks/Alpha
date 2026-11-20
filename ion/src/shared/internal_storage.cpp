@@ -457,6 +457,31 @@ InternalStorage::Record::ErrorStatus InternalStorage::setValueOfRecord(Record re
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
+InternalStorage::Record::ErrorStatus InternalStorage::appendToRecord(Record record, const void * bytes, size_t size)
+{
+  char * p = pointerOfRecord(record);
+
+  if (p == nullptr) {
+    return Record::ErrorStatus::RecordDoesNotExist;
+  }
+
+  record_size_t previousRecordSize = sizeOfRecordStarting(p);
+  size_t newRecordSize = previousRecordSize + size;
+
+  if (newRecordSize >= k_maxRecordSize || !slideBuffer(p + previousRecordSize, size)) {
+    return notifyFullnessToDelegate();
+  }
+
+  overrideSizeAtPosition(p, newRecordSize);
+  memcpy(p + previousRecordSize, bytes, size);
+  notifyChangeToDelegate(record);
+
+  m_lastRecordRetrieved = record;
+  m_lastRecordRetrievedPointer = p;
+
+  return Record::ErrorStatus::None;
+}
+
 void InternalStorage::destroyRecord(Record record) {
   if (record.isNull()) {
     return;
