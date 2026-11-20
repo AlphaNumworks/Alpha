@@ -478,7 +478,7 @@ void AppsContainer::activateExamMode(GlobalPreferences::ExamMode examMode) {
   assert(examMode != GlobalPreferences::ExamMode::Off && examMode != GlobalPreferences::ExamMode::Unknown);
   // reset();
   Ion::Storage::sharedStorage()->lockRecords();
-  Ion::Storage::sharedStorage()->destroyNotLockedRecords();
+  // Ion::Storage::sharedStorage()->destroyNotLockedRecords();
   Clipboard::sharedClipboard()->reset();
   for (int i = 0; i < numberOfApps(); i++) {
     appSnapshotAtIndex(i)->reset();

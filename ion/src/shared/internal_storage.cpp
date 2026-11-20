@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <new>
 #include <ion/internal_storage.h>
+#include <ion/lock_table.h>
 #if ION_STORAGE_LOG
 #include <iostream>
 #endif
@@ -174,8 +175,6 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithFullName(c
   char * newRecord = newRecordAddress;
   // Fill totalSize
   newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
-  // Fill Lockv
-  newRecord += overrideLockvAtPosition(newRecord, (lockv_size_t)((lockable ? 1u : 0u)));
   // Fill name
   newRecord += overrideFullNameAtPosition(newRecord, fullName);
   // Fill data
@@ -183,9 +182,13 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithFullName(c
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(fullName);
+  if (!applyLockable(r, lockable)) {
+    destroyRecord(r);
+    return notifyFullnessToDelegate();
+  }
   notifyChangeToDelegate(r);
-  m_lastRecordRetrieved = r;
-  m_lastRecordRetrievedPointer = newRecordAddress;
+  // The lock table may have grown before the new record: its address changed.
+  pointerOfRecord(r);
   return Record::ErrorStatus::None;
 }
 
@@ -202,8 +205,6 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithExtension(
   char * newRecord = newRecordAddress;
   // Fill totalSize
   newRecord += overrideSizeAtPosition(newRecord, (record_size_t)recordSize);
-  // Fill Lockv
-  newRecord += overrideLockvAtPosition(newRecord, (lockv_size_t)(lockable ? 1u : 0u));
   // Fill name
   newRecord += overrideBaseNameWithExtensionAtPosition(newRecord, baseName, extension);
   // Fill data
@@ -211,9 +212,13 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithExtension(
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(fullNameOfRecordStarting(newRecordAddress));
+  if (!applyLockable(r, lockable)) {
+    destroyRecord(r);
+    return notifyFullnessToDelegate();
+  }
   notifyChangeToDelegate(r);
-  m_lastRecordRetrieved = r;
-  m_lastRecordRetrievedPointer = newRecordAddress;
+  // The lock table may have grown before the new record: its address changed.
+  pointerOfRecord(r);
   return Record::ErrorStatus::None;
 }
 
@@ -232,7 +237,7 @@ int InternalStorage::numberOfRecordsWithExtension(const char * extension) {
 int InternalStorage::numberOfRecords() {
   int count = 0;
   for (char * p : *this) {
-    const char * name = fullNameOfRecordStarting(p);
+    // const char * name = fullNameOfRecordStarting(p);
     count++;
   }
   return count;
@@ -340,53 +345,46 @@ void InternalStorage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
+// NOTE: Maybe no more destroyNotLockedRecords :'(
 void InternalStorage::lockRecords() {
-  for (char * p : *this) {
-    lockv_size_t lockv = InternalStorage::lockvOfRecordStarting(p);
-    if (lockv & 1u) {  // Lokcable
-      lockv |= (1u << 1);
-      overrideLockvAtPosition(p + sizeof(record_size_t), lockv);
-    }
+  if (m_lockOffset != 0) {
+    return;
   }
+  Record::Data table = LockTable::tableValue();
+
+  char * last = m_buffer;
+  char * p = m_buffer;
+
+  for (;p < m_buffer + k_storageSize;) {
+    record_size_t size = sizeOfRecordStarting(p);
+
+    if (size == 0) break;
+
+    Record r(fullNameOfRecordStarting(p));
+
+    bool isTable = LockTable::isTable(r);
+
+    if (isTable || LockTable::isLockableIn(table, r)) {
+      if (isTable) {
+        table.buffer = last + ((const char *)table.buffer - p);
+      }
+      memmove(last, p, size);
+      last += size;
+    }
+    p += size;
+  }
+  overrideSizeAtPosition(last, 0);
+
+  m_lockOffset = last - m_buffer;
+
+  m_lastRecordRetrievedPointer = nullptr;
+  m_lastRecordRetrieved = Record(nullptr);
+  notifyChangeToDelegate();
 }
 
 void InternalStorage::unlockRecords() {
-  char * p = m_buffer;
-  for (; p < m_buffer + k_storageSize;) {
-    record_size_t recordSize = sizeOfRecordStarting(p);
-    if (recordSize == 0) {
-      break;
-    }
-    lockv_size_t lockv = InternalStorage::lockvOfRecordStarting(p);
-    if (lockv & 1u) {  // Lokcable
-      lockv &= (lockv_size_t)~(1u << 1);
-      overrideLockvAtPosition(p + sizeof(record_size_t), lockv);
-    }
-    p += recordSize;
-  }
-}
+  m_lockOffset = 0;
 
-void InternalStorage::destroyNotLockedRecords() {
-  char * p = m_buffer;
-  char * previousLocation = p;
-
-  // Cannot use for (char * p : *this) cause we will move all locked record to the begin
-  for (;p < m_buffer + k_storageSize;) {
-    record_size_t recordSize = sizeOfRecordStarting(p);
-    if (recordSize == 0) {
-      break;
-    }
-    lockv_size_t lockv = lockvOfRecordStarting(p);
-    if ((lockv & 1u) && (lockv & (1u << 1))) {  // Lockable && locked
-      // Here is the magic. A locked record can only slide left.
-      memmove(previousLocation, p, recordSize);
-      previousLocation += recordSize;
-    }
-    p += recordSize;
-  }
-  InternalStorage::overrideSizeAtPosition(previousLocation, 0);
-  m_lastRecordRetrievedPointer = nullptr;
-  m_lastRecordRetrieved = Record(nullptr);
   notifyChangeToDelegate();
 }
 
@@ -396,6 +394,7 @@ InternalStorage::InternalStorage() {
   m_delegate = nullptr;
   m_lastRecordRetrieved = nullptr;
   m_lastRecordRetrievedPointer = nullptr;
+  m_lockOffset = 0;
   assert(m_magicHeader == Magic);
   assert(m_magicFooter == Magic);
 }
@@ -423,11 +422,14 @@ InternalStorage::Record::ErrorStatus InternalStorage::setFullNameOfRecord(const 
     size_t previousNameSize = strlen(fullNameOfRecordStarting(p))+1;
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     size_t newRecordSize = previousRecordSize - previousNameSize + nameSize;
-    if (newRecordSize >= k_maxRecordSize || !slideBuffer(p + sizeof(record_size_t) + sizeof(lockv_size_t) + previousNameSize, nameSize-previousNameSize)) {
+    if (newRecordSize >= k_maxRecordSize || !slideBuffer(p + sizeof(record_size_t) + previousNameSize, nameSize-previousNameSize)) {
       return notifyFullnessToDelegate();
     }
     overrideSizeAtPosition(p, newRecordSize);
-    overrideFullNameAtPosition(p + sizeof(record_size_t) + sizeof(lockv_size_t), fullName);
+    overrideFullNameAtPosition(p + sizeof(record_size_t), fullName);
+
+    LockTable::rename(record, Record(fullName));
+
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
@@ -446,14 +448,16 @@ InternalStorage::Record::ErrorStatus InternalStorage::setBaseNameWithExtensionOf
     size_t previousNameSize = strlen(fullNameOfRecordStarting(p))+1;
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
-    if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t) + sizeof(lockv_size_t) + previousNameSize, nameSize-previousNameSize)) {
+    if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+sizeof(record_size_t)+previousNameSize, nameSize-previousNameSize)) {
       return notifyFullnessToDelegate();
     }
     overrideSizeAtPosition(p, newRecordSize);
-    char * fullNamePosition = p + sizeof(record_size_t) + sizeof(lockv_size_t);
+    char * fullNamePosition = p + sizeof(record_size_t);
     overrideBaseNameWithExtensionAtPosition(fullNamePosition, baseName, extension);
     // Recompute the CRC32
+    Record oldRecord = record;
     record = Record(fullNamePosition);
+    LockTable::rename(oldRecord, record);
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
@@ -468,7 +472,7 @@ InternalStorage::Record::Data InternalStorage::valueOfRecord(const Record record
     const char * fullName = fullNameOfRecordStarting(p);
     record_size_t size = sizeOfRecordStarting(p);
     const void * value = valueOfRecordStarting(p);
-    return {.buffer = value, .size = size-strlen(fullName)-1-sizeof(record_size_t)-sizeof(lockv_size_t)};
+    return {.buffer = value, .size = size-strlen(fullName)-1-sizeof(record_size_t)};
   }
   return {.buffer= nullptr, .size= 0};
 }
@@ -487,7 +491,7 @@ InternalStorage::Record::ErrorStatus InternalStorage::setValueOfRecord(Record re
     }
     record_size_t fullNameSize = strlen(fullName)+1;
     overrideSizeAtPosition(p, newRecordSize);
-    overrideValueAtPosition(p+sizeof(record_size_t)+sizeof(lockv_size_t)+fullNameSize, data.buffer, data.size);
+    overrideValueAtPosition(p+sizeof(record_size_t)+fullNameSize, data.buffer, data.size);
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
@@ -496,10 +500,47 @@ InternalStorage::Record::ErrorStatus InternalStorage::setValueOfRecord(Record re
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
+bool InternalStorage::applyLockable(Record record, bool lockable) {
+  if (m_lockOffset != 0) {
+    return true;
+  }
+  if (lockable) {
+    return LockTable::makeLockable(record);
+  }
+  LockTable::remove(record);
+  return true;
+}
+
+InternalStorage::Record::ErrorStatus InternalStorage::appendToRecord(Record record, const void * bytes, size_t size)
+{
+  char * p = pointerOfRecord(record);
+
+  if (p == nullptr) {
+    return Record::ErrorStatus::RecordDoesNotExist;
+  }
+
+  record_size_t previousRecordSize = sizeOfRecordStarting(p);
+  size_t newRecordSize = previousRecordSize + size;
+
+  if (newRecordSize >= k_maxRecordSize || !slideBuffer(p + previousRecordSize, size)) {
+    return notifyFullnessToDelegate();
+  }
+
+  overrideSizeAtPosition(p, newRecordSize);
+  memcpy(p + previousRecordSize, bytes, size);
+  notifyChangeToDelegate(record);
+
+  m_lastRecordRetrieved = record;
+  m_lastRecordRetrievedPointer = p;
+
+  return Record::ErrorStatus::None;
+}
+
 void InternalStorage::destroyRecord(Record record) {
   if (record.isNull()) {
     return;
   }
+  LockTable::remove(record);
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
@@ -531,17 +572,12 @@ InternalStorage::record_size_t InternalStorage::sizeOfRecordStarting(char * star
   return StorageHelper::unalignedShort(start);
 }
 
-InternalStorage::lockv_size_t InternalStorage::lockvOfRecordStarting(char * start) const {
-  char * ptr = start + sizeof(record_size_t);
-  return *(lockv_size_t *)(ptr);
-};
-
 const char * InternalStorage::fullNameOfRecordStarting(char * start) const {
-  return start + sizeof(record_size_t) + sizeof(lockv_size_t);
+  return start + sizeof(record_size_t);
 }
 
 const void * InternalStorage::valueOfRecordStarting(char * start) const {
-  char * currentChar = start + sizeof(record_size_t) + sizeof(lockv_size_t);
+  char * currentChar = start + sizeof(record_size_t);
   size_t fullNameLength = strlen(currentChar);
   return currentChar + fullNameLength + 1;
 }
@@ -549,12 +585,6 @@ const void * InternalStorage::valueOfRecordStarting(char * start) const {
 size_t InternalStorage::overrideSizeAtPosition(char * position, record_size_t size) {
   StorageHelper::writeUnalignedShort(size, position);
   return sizeof(record_size_t);
-}
-
-size_t InternalStorage::overrideLockvAtPosition(char * position, lockv_size_t size) {
-  // StorageHelper ?
-  *((lockv_size_t *)position) = size;
-  return sizeof(lockv_size_t);
 }
 
 size_t InternalStorage::overrideFullNameAtPosition(char * position, const char * fullName) {
@@ -592,15 +622,19 @@ bool InternalStorage::isNameOfRecordTaken(Record r, const Record * recordToExclu
      * name is nullptr. */
     return true;
   }
+  uint32_t lastoff = m_lockOffset;
+  m_lockOffset = 0;
   for (char * p : *this) {
     Record s(fullNameOfRecordStarting(p));
     if (recordToExclude && s == *recordToExclude) {
       continue;
     }
     if (s == r) {
+      m_lockOffset = lastoff;
       return true;
     }
   }
+  m_lockOffset = lastoff;
   return false;
 }
 
@@ -648,12 +682,12 @@ size_t InternalStorage::sizeOfBaseNameAndExtension(const char * baseName, const 
 }
 
 size_t InternalStorage::sizeOfRecordWithBaseNameAndExtension(const char * baseName, const char * extension, size_t dataSize) const {
-  return sizeOfBaseNameAndExtension(baseName, extension) + dataSize + sizeof(record_size_t) + sizeof(lockv_size_t);
+  return sizeOfBaseNameAndExtension(baseName, extension) + dataSize + sizeof(record_size_t);
 }
 
 size_t InternalStorage::sizeOfRecordWithFullName(const char * fullName, size_t dataSize) const {
   size_t nameSize = strlen(fullName) + 1;
-  return nameSize + dataSize + sizeof(record_size_t) + sizeof(lockv_size_t);
+  return nameSize + dataSize + sizeof(record_size_t);
 }
 
 bool InternalStorage::slideBuffer(char * position, int delta) {
@@ -702,15 +736,9 @@ InternalStorage::Record InternalStorage::privateRecordAndExtensionOfRecordBaseNa
 
 InternalStorage::RecordIterator & InternalStorage::RecordIterator::operator++() {
   assert(m_recordStart);
-  lockv_size_t lockv;
-  do {
-    record_size_t size = StorageHelper::unalignedShort(m_recordStart);
-    char * nextRecord = m_recordStart + size;
-    m_recordStart = (StorageHelper::unalignedShort(nextRecord) == 0) ? nullptr : nextRecord;
-    if (m_recordStart) {
-      lockv = *((uint8_t *)m_recordStart + sizeof(record_size_t));
-    }
-  } while (m_recordStart && (lockv & 0b11u) == 0b11u);
+  record_size_t size = StorageHelper::unalignedShort(m_recordStart);
+  char * nextRecord = m_recordStart + size;
+  m_recordStart = (StorageHelper::unalignedShort(nextRecord) == 0) ? nullptr : nextRecord;
   return *this;
 }
 

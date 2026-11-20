@@ -9,23 +9,24 @@ namespace Ion {
 
 /**
  * Storage : | Magic |                       Record1                         |                          Record2                      | ... | Magic |
- *           | Magic | Size1(uint16_t) | Lockv1(uint8_t) | FullName1 | Body1 | Size2(uint16_t) | Lockv2(uint8_t) | FullName2 | Body2 | ... | Magic |
+ *           | Magic | Size1(uint16_t) | FullName1 | Body1 | Size2(uint16_t) | FullName2 | Body2 | ... | Magic |
  *
  * A record's fullName is baseName.extension.
  *
- * If a record is lockable and locked, it is not accessible in exam mode.
- *
- * The lock value (lockv) is a uint8_t, where the first bit (lockv & 1u)
- * indicates whether the record is lockable, and the second bit (lockv & (1u << 1))
- * indicates the current lock state (0 = unlocked, 1 = locked).
+ * There is no longer Lockv in record cuz of Epsilon and Upsilon workshop.
+ * Mu cannot be only available for python transfer on its own site.
+ * 
+ * Instead, a lock.meta file should be created at the very root of the storage :
+ * Its a vector of CRC32 hashed name matching with lockv.
+ * Inaccessible in exam mode by default, skipped by iterator
  */
 
 class StorageDelegate;
+class LockTable;
 
 class InternalStorage {
 public:
   typedef uint16_t record_size_t;
-  typedef uint8_t  lockv_size_t;
 
   static constexpr char eqExtension[] = "eq";
   static constexpr char expExtension[] = "exp";
@@ -81,6 +82,7 @@ public:
     Data value() const;
     ErrorStatus setValue(Data data);
     void destroy();
+    uint32_t fullNameCRC32() const { return m_fullNameCRC32; };
   private:
     Record(const char * basename, int basenameLength, const char * extension, int extensionLength);
     uint32_t m_fullNameCRC32;
@@ -121,7 +123,6 @@ public:
   void destroyRecordsWithExtension(const char * extension);
   void lockRecords();
   void unlockRecords();
-  void destroyNotLockedRecords();
 
   // Useful
   static bool FullNameCompliant(const char * name);
@@ -134,7 +135,6 @@ protected:
   /* Getters on address in buffer */
   char * pointerOfRecord(const Record record) const;
   record_size_t sizeOfRecordStarting(char * start) const;
-  lockv_size_t  lockvOfRecordStarting(char * start) const;
   const char * fullNameOfRecordStarting(char * start) const;
   const void * valueOfRecordStarting(char * start) const;
   void destroyRecord(const Record record);
@@ -149,20 +149,17 @@ protected:
     char * m_recordStart;
   };
   RecordIterator begin() const {
-    char * first = (char *)m_buffer;
+    char * first = (char *)m_buffer + m_lockOffset;
     if (sizeOfRecordStarting(first) == 0) {
       return nullptr;
     }
-    RecordIterator it(first);
-    lockv_size_t lockv = *(lockv_size_t *)(m_buffer + sizeof(record_size_t));
-    if ((lockv & 0b11u) == 0b11u) {
-      ++it;
-    }
-    return it;
-  }
+    return RecordIterator(first);
+  };
   RecordIterator end() const { return RecordIterator(nullptr); }
 
 private:
+  friend class LockTable;
+
   constexpr static uint32_t Magic = 0xEE0BDDBA;
   constexpr static size_t k_maxRecordSize = (1 << sizeof(record_size_t)*8);
 
@@ -172,10 +169,12 @@ private:
   Record::ErrorStatus setBaseNameWithExtensionOfRecord(const Record record, const char * baseName, const char * extension);
   Record::Data        valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
+  Record::ErrorStatus appendToRecord(const Record record, const void * bytes, size_t size);
+
+  bool applyLockable(const Record record, bool lockable);
 
   /* Overriders */
   size_t overrideSizeAtPosition(char * position, record_size_t size);
-  size_t overrideLockvAtPosition(char * position, lockv_size_t lockv);
   size_t overrideFullNameAtPosition(char * position, const char * fullName);
   size_t overrideBaseNameWithExtensionAtPosition(char * position, const char * baseName, const char * extension);
   size_t overrideValueAtPosition(char * position, const void * data, record_size_t size);
@@ -191,13 +190,14 @@ private:
 
   Record privateRecordAndExtensionOfRecordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult = nullptr, int baseNameLength = -1);
 
-  uint32_t m_magicHeader;
-  char m_buffer[k_storageSize];
-  uint32_t m_magicFooter;
+  uint32_t          m_magicHeader;
+  char              m_buffer[k_storageSize];
+  uint32_t          m_magicFooter;
   StorageDelegate * m_delegate;
+  uint32_t          m_lockOffset;
 protected:
-  mutable Record m_lastRecordRetrieved;
-  mutable char * m_lastRecordRetrievedPointer;
+  mutable Record    m_lastRecordRetrieved;
+  mutable char *    m_lastRecordRetrievedPointer;
 };
 
 /* Some apps memoize records and need to be notified when a record might have
