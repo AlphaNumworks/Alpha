@@ -1,5 +1,6 @@
 #include <quiz.h>
 #include <ion/storage.h>
+#include <ion/lock_table.h>
 #include <assert.h>
 #include <string.h>
 
@@ -499,4 +500,42 @@ aaaaaa)";
   retrievedRecord2.destroy();
   retrievedRecord3.destroy();
   retrievedRecord4.destroy();
+}
+
+QUIZ_CASE(ion_lock_table) {
+  Storage * storage = Storage::sharedStorage();
+  size_t initialAvailableSize = storage->availableSize();
+
+  // A file that's not in the Lock Table is not lockable
+  Storage::Record a("lockTestA.py");
+  Storage::Record b("lockTestB.py");
+  quiz_assert(!LockTable::isLockable(a));
+  quiz_assert(LockTable::getLockv(a) == 0);
+
+  // The key is the name onlyn the record doesn't have to exist
+  quiz_assert(LockTable::makeLockable(a));
+  quiz_assert(LockTable::isLockable(a));
+  quiz_assert(!LockTable::isLockable(b));
+
+  // A record in the storage, before and after the table keeps its content
+  const char * data = "print(1)";
+  quiz_assert(storage->createRecordWithFullName("lockTestB.py", data, strlen(data)) == Storage::Record::ErrorStatus::None);
+  quiz_assert(LockTable::makeLockable(b));
+  quiz_assert(LockTable::isLockable(a));
+  quiz_assert(LockTable::isLockable(b));
+  Storage::Record::Data value = storage->recordNamed("lockTestB.py").value();
+  quiz_assert(value.size == strlen(data) && memcmp(value.buffer, data, value.size) == 0);
+
+  // Changing the content of a file doesn't change its lockv
+  const char * newData = "print(1+1)";
+  quiz_assert(b.setValue({.buffer = newData, .size = strlen(newData)}) == Storage::Record::ErrorStatus::None);
+  quiz_assert(LockTable::isLockable(b));
+
+  quiz_assert(LockTable::makeNotLockable(a));
+  quiz_assert(!LockTable::isLockable(a));
+  quiz_assert(LockTable::isLockable(b));
+
+  storage->recordNamed("lockv.cfg").destroy();
+  b.destroy();
+  quiz_assert(storage->availableSize() == initialAvailableSize);
 }

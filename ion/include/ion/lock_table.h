@@ -1,36 +1,29 @@
 #ifndef ION_LOCK_TABLE_H
-    #define ION_LOCK_TABLE_H
+#define ION_LOCK_TABLE_H
 
+#include "ion/storage.h"
 #include <cstdint>
 
-namespace Ion
-{
+namespace Ion {
 
-    class LockTable
-    {
-        
-        public:
-            typedef uint8_t lockv_t;
-            static constexpr int k_locktableEntrySize = sizeof(lockv_t) + sizeof(uint32_t);
+class LockTable {
+  static constexpr char   k_locktableName[] = "lockv.cfg";
+  static constexpr size_t k_maxEntries = 64;
 
-            static lockv_t getLockvByFullname(const char * fullname);
-            static bool isLockableByFullname(const char * fullname);
+public:
+  typedef uint8_t lockv_t;
+  static constexpr size_t k_locktableEntrySize = sizeof(lockv_t) + sizeof(uint32_t);
 
-            static lockv_t getLockvByNameAndExtension(const char * name, const char * extension);
-            static bool isLockableByNameAndExtension(const char * name, const char * extension);
+  static lockv_t getLockv(InternalStorage::Record r);
+  static bool isLockable(InternalStorage::Record r);
 
-            static bool makeLockableByFullname(const char * fullname);
-            static bool makeLockableByNameAndExtension(const char * name, const char * extension);
-            static bool makeNotLockableByFullname(const char * fullname);
-            static bool makeNotLockableByNameAndExtension(const char * name, const char * extension);
+  static bool makeLockable(InternalStorage::Record r);
+  static bool makeNotLockable(InternalStorage::Record r);
 
-        protected:
-            static char * lockvPtrByFullname(const char * fullname);
-            static char * lockvPtrByNameAndExtension(const char * fullname, const char * extension);
-
-        private:
-            // Pass
-    };
+protected:
+  static char * lockvPtr(InternalStorage::Record r);
+  static char * createLockv(InternalStorage::Record r);
+};
 
 }
 
