@@ -5,9 +5,9 @@
 namespace Ion
 {
 
-    LockTable::lockv_t LockTable::getLockvByFullname(char *buffer, const char *fullname)
+    LockTable::lockv_t LockTable::getLockvByFullname(const char *fullname)
     {
-        char * lock_ptr = lockvPtrByFullname(buffer, fullname);
+        char * lock_ptr = lockvPtrByFullname(fullname);
 
         if (lock_ptr == nullptr) {
             return 0;
@@ -15,9 +15,14 @@ namespace Ion
         return *(lockv_t *)lock_ptr;
     }
 
-    char * LockTable::lockvPtrByFullname(char *buffer, const char *fullname)
+    bool LockTable::isLockableByFullname(const char *fullname)
     {
-        InternalStorage::Record r = Ion::Storage::sharedStorage()->recordNamed("lock.meta");
+        return (getLockvByFullname(fullname) & (1u)) == 1;
+    }
+
+    char * LockTable::lockvPtrByFullname(const char *fullname)
+    {
+        InternalStorage::Record r = Ion::Storage::sharedStorage()->recordNamed("lockv.cfg");
 
         if (r.isNull()) {
             return nullptr;
@@ -25,7 +30,8 @@ namespace Ion
 
         InternalStorage::Record::Data v = r.value();
         uint32_t crc = InternalStorage::Record(fullname).fullNameCRC32();
-        for (char * p = (char*)v.buffer; p < (char*)v.buffer + v.size; p += k_locktableEntrySize) {
+        char * end = (char *)v.buffer + v.size;
+        for (char * p = (char*)v.buffer; p + k_locktableEntrySize <= end; p += k_locktableEntrySize) {
             uint32_t otherCRC;
             memcpy(&otherCRC, p, sizeof(uint32_t));
             if (otherCRC == crc) {
