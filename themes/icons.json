@@ -14,6 +14,7 @@
     "apps/sequence/sequence_icon.png" : "apps/sequence_icon.png",
     "apps/settings/settings_icon.png" : "apps/settings_icon.png",
     "apps/solver/solver_icon.png" : "apps/solver_icon.png",
+    "apps/sprites/sprites_icon.png" : "apps/sprites_icon.png",
     "apps/statistics/stat_icon.png" : "apps/stat_icon.png",
     
     "apps/probability/images/binomial_icon.png" : "probability/binomial_icon.png",

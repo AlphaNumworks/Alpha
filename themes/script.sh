@@ -45,6 +45,7 @@ if [ $(which inkscape | wc -l) -ge 1 ]; then
   inkscape ./generated_icons.svg -o $dir/apps/external_icon.png --export-area=160:258:215:314
 #  inkscape ./generated_icons.svg -o $dir/apps/xcas_icon.png --export-area=80:342:135:398
   inkscape ./generated_icons.svg -o $dir/apps/reader_icon.png --export-area=160:342:215:398
+  inkscape ./generated_icons.svg -o $dir/apps/sprites_icon.png --export-area=130:424:185:480
   inkscape ./generated_icons.svg -o $dir/probability/binomial_icon.png --export-area=273:0:308:19
   inkscape ./generated_icons.svg -o $dir/probability/chi_squared_icon.png --export-area=273:29:308:48
   inkscape ./generated_icons.svg -o $dir/probability/exponential_icon.png --export-area=273:58:308:77
