@@ -123,7 +123,6 @@ public:
   void destroyRecordsWithExtension(const char * extension);
   void lockRecords();
   void unlockRecords();
-  void destroyNotLockedRecords();
 
   // Useful
   static bool FullNameCompliant(const char * name);
@@ -153,7 +152,7 @@ protected:
     if (sizeOfRecordStarting((char *)m_buffer) == 0) {
       return nullptr;
     }
-    return RecordIterator((char *)m_buffer);
+    return RecordIterator((char *)m_buffer + m_lockOffset);
   };
   RecordIterator end() const { return RecordIterator(nullptr); }
 
@@ -188,13 +187,14 @@ private:
 
   Record privateRecordAndExtensionOfRecordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult = nullptr, int baseNameLength = -1);
 
-  uint32_t m_magicHeader;
-  char m_buffer[k_storageSize];
-  uint32_t m_magicFooter;
+  uint32_t          m_magicHeader;
+  char              m_buffer[k_storageSize];
+  uint32_t          m_magicFooter;
   StorageDelegate * m_delegate;
+  uint32_t          m_lockOffset;
 protected:
-  mutable Record m_lastRecordRetrieved;
-  mutable char * m_lastRecordRetrievedPointer;
+  mutable Record    m_lastRecordRetrieved;
+  mutable char *    m_lastRecordRetrievedPointer;
 };
 
 /* Some apps memoize records and need to be notified when a record might have

@@ -18,6 +18,7 @@ bool LockTable::isLockable(
     InternalStorage::Record r
 )
 {
+    if (r == InternalStorage::Record(k_locktableName)) return true;
     return (getLockv(r) & 1u) == 1;
 }
 

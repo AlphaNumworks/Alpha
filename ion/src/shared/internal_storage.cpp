@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <new>
 #include <ion/internal_storage.h>
+#include <ion/lock_table.h>
 #if ION_STORAGE_LOG
 #include <iostream>
 #endif
@@ -161,7 +162,7 @@ InternalStorage::Record::ErrorStatus InternalStorage::notifyFullnessToDelegate()
   return Record::ErrorStatus::NotEnoughSpaceAvailable;
 }
 
-InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithFullName(const char * fullName, const void * data, size_t size, bool) {
+InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithFullName(const char * fullName, const void * data, size_t size, bool lockable) {
   size_t recordSize = sizeOfRecordWithFullName(fullName, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
     return notifyFullnessToDelegate();
@@ -181,13 +182,16 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithFullName(c
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(fullName);
+  if (lockable) {
+    LockTable::makeLockable(r);
+  }
   notifyChangeToDelegate(r);
   m_lastRecordRetrieved = r;
   m_lastRecordRetrievedPointer = newRecordAddress;
   return Record::ErrorStatus::None;
 }
 
-InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool) {
+InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithExtension(const char * baseName, const char * extension, const void * data, size_t size, bool lockable) {
   size_t recordSize = sizeOfRecordWithBaseNameAndExtension(baseName, extension, size);
   if (recordSize >= k_maxRecordSize || recordSize > availableSize()) {
     return notifyFullnessToDelegate();
@@ -207,6 +211,9 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithExtension(
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(fullNameOfRecordStarting(newRecordAddress));
+  if (lockable) {
+    LockTable::makeLockable(r);
+  }
   notifyChangeToDelegate(r);
   m_lastRecordRetrieved = r;
   m_lastRecordRetrievedPointer = newRecordAddress;
@@ -336,18 +343,32 @@ void InternalStorage::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
+// NOTE: Maybe no more destroyNotLockedRecords :'(
 void InternalStorage::lockRecords() {
-  // Nothing
+  char * last = m_buffer;
+  for (auto * p : *this) {
+    const char * fname = fullNameOfRecordStarting(p);
+    Record r(fname);
+    record_size_t s = sizeOfRecordStarting(p);
+
+    if (LockTable::isLockable(r)) {
+      memmove(p, last, s);
+      last += s;
+      continue;
+    }
+  }
+  overrideSizeAtPosition(last, 0);
+
+  m_lockOffset = last - m_buffer;
+
+  m_lastRecordRetrievedPointer = nullptr;
+  m_lastRecordRetrieved = Record(nullptr);
+  notifyChangeToDelegate();
 }
 
 void InternalStorage::unlockRecords() {
-  // Nothing
-}
+  m_lockOffset = 0;
 
-void InternalStorage::destroyNotLockedRecords() {
-  overrideSizeAtPosition(m_buffer, 0);
-  m_lastRecordRetrievedPointer = nullptr;
-  m_lastRecordRetrieved = Record(nullptr);
   notifyChangeToDelegate();
 }
 
@@ -357,6 +378,7 @@ InternalStorage::InternalStorage() {
   m_delegate = nullptr;
   m_lastRecordRetrieved = nullptr;
   m_lastRecordRetrievedPointer = nullptr;
+  m_lockOffset = 0;
   assert(m_magicHeader == Magic);
   assert(m_magicFooter == Magic);
 }
@@ -567,15 +589,19 @@ bool InternalStorage::isNameOfRecordTaken(Record r, const Record * recordToExclu
      * name is nullptr. */
     return true;
   }
+  uint32_t lastoff = m_lockOffset;
+  m_lockOffset = 0;
   for (char * p : *this) {
     Record s(fullNameOfRecordStarting(p));
     if (recordToExclude && s == *recordToExclude) {
       continue;
     }
     if (s == r) {
+      m_lockOffset = lastoff;
       return true;
     }
   }
+  m_lockOffset = lastoff;
   return false;
 }
 
