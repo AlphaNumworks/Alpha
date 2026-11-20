@@ -13,9 +13,12 @@
     - [X] Records lockable not listables with os.listdir() and inaccessibles with open("r").
     - [X] New records cannot be named the same as a locked record
     - [X] Records from official epsilon site having a auto lockv, and removing lockv on retrieving
-- [ ] Custom application order AND hideable applications
 - [X] New theme
 - [ ] New DA / Logo / Name ?? (delta)
+- [ ] Custom application order AND hideable applications
+- [ ] Files application
+- [ ] Calendar application
+- [ ] Sprite editor application
 
 ## Website
 - [ ] A website (w/ github pages?)
