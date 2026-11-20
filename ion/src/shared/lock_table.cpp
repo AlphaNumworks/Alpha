@@ -5,6 +5,50 @@
 namespace Ion
 {
 
+    bool LockTable::makeLockableByFullname(const char * fullname)
+    {
+        char * lock_ptr  = lockvPtrByFullname(fullname);
+
+        if (lock_ptr == nullptr) {
+            return false;
+        }
+        (*(lockv_t *)lock_ptr) |= 1u;
+        return true;
+    }
+
+    bool LockTable::makeLockableByNameAndExtension(const char * name, const char * extension)
+    {
+        char * lock_ptr  = lockvPtrByNameAndExtension(name, extension);
+
+        if (lock_ptr == nullptr) {
+            return false;
+        }
+        (*(lockv_t *)lock_ptr) |= 1u;
+        return true;
+    }
+
+    bool LockTable::makeNotLockableByFullname(const char * fullname)
+    {
+        char * lock_ptr  = lockvPtrByFullname(fullname);
+
+        if (lock_ptr == nullptr) {
+            return false;
+        }
+        (*(lockv_t *)lock_ptr) &= ~(lockv_t)(1u);
+        return true;
+    }
+
+    bool LockTable::makeNotLockableByNameAndExtension(const char * name, const char * extension)
+    {
+        char * lock_ptr  = lockvPtrByNameAndExtension(name, extension);
+
+        if (lock_ptr == nullptr) {
+            return false;
+        }
+        (*(lockv_t *)lock_ptr) &= ~(lockv_t)(1u);
+        return true;
+    }
+
     LockTable::lockv_t LockTable::getLockvByFullname(const char *fullname)
     {
         char * lock_ptr = lockvPtrByFullname(fullname);

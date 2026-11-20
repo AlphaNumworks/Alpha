@@ -19,6 +19,11 @@ namespace Ion
             static lockv_t getLockvByNameAndExtension(const char * name, const char * extension);
             static bool isLockableByNameAndExtension(const char * name, const char * extension);
 
+            static bool makeLockableByFullname(const char * fullname);
+            static bool makeLockableByNameAndExtension(const char * name, const char * extension);
+            static bool makeNotLockableByFullname(const char * fullname);
+            static bool makeNotLockableByNameAndExtension(const char * name, const char * extension);
+
         protected:
             static char * lockvPtrByFullname(const char * fullname);
             static char * lockvPtrByNameAndExtension(const char * fullname, const char * extension);
