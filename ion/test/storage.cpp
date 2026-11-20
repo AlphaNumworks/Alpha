@@ -578,3 +578,67 @@ QUIZ_CASE(ion_lock_table_grows_in_place) {
   storage->recordNamed("lockTestC.py").destroy();
   quiz_assert(storage->availableSize() == initialAvailableSize);
 }
+
+QUIZ_CASE(ion_lock_table_follows_records) {
+  Storage * s = Storage::sharedStorage();
+  const char * d = "print(1)";
+
+  // The second creation makes the table grow before the new record.
+  quiz_assert(s->createRecordWithFullName("lockU1.py", d, strlen(d), true) == Storage::Record::ErrorStatus::None);
+  quiz_assert(s->createRecordWithFullName("lockU2.py", d, strlen(d), true) == Storage::Record::ErrorStatus::None);
+  Storage::Record::Data v = s->recordNamed("lockU2.py").value();
+  quiz_assert(v.size == strlen(d) && memcmp(v.buffer, d, v.size) == 0);
+  quiz_assert(LockTable::isLockable(Storage::Record("lockU1.py")));
+  quiz_assert(LockTable::isLockable(Storage::Record("lockU2.py")));
+
+  // Renaming keeps the lock state.
+  quiz_assert(s->recordNamed("lockU1.py").setBaseNameWithExtension("lockU3", "py") == Storage::Record::ErrorStatus::None);
+  quiz_assert(LockTable::isLockable(Storage::Record("lockU3.py")));
+  quiz_assert(!LockTable::isLockable(Storage::Record("lockU1.py")));
+
+  // A destroyed record is forgotten: a new record with the same name is not lockable.
+  s->recordNamed("lockU2.py").destroy();
+  quiz_assert(s->createRecordWithFullName("lockU2.py", d, strlen(d)) == Storage::Record::ErrorStatus::None);
+  quiz_assert(!LockTable::isLockable(Storage::Record("lockU2.py")));
+  quiz_assert(LockTable::isLockable(Storage::Record("lockU3.py")));
+
+  s->destroyAllRecords();
+}
+
+QUIZ_CASE(ion_lock_table_lock_records) {
+  Storage * s = Storage::sharedStorage();
+  const char * d = "print(1)";
+  const char * e = "print(22)";
+  quiz_assert(s->createRecordWithFullName("keepA.py", d, strlen(d), true) == Storage::Record::ErrorStatus::None);
+  quiz_assert(s->createRecordWithFullName("drop.eq", d, strlen(d)) == Storage::Record::ErrorStatus::None);
+  quiz_assert(s->createRecordWithFullName("keepC.py", e, strlen(e), true) == Storage::Record::ErrorStatus::None);
+
+  s->lockRecords();
+  // The lockable records (and the table) are hidden, the others are destroyed
+  quiz_assert(s->numberOfRecords() == 0);
+  quiz_assert(s->recordNamed("keepA.py").isNull());
+
+  // The table is read-only in exam mode
+  quiz_assert(!LockTable::makeLockable(Storage::Record("other.py")));
+
+  // A record created in exam mode is visible and not lockable
+  quiz_assert(s->createRecordWithFullName("exam.py", d, strlen(d), true) == Storage::Record::ErrorStatus::None);
+  quiz_assert(s->numberOfRecords() == 1);
+  quiz_assert(!LockTable::isLockable(Storage::Record("exam.py")));
+
+  // Locking again must not touch the locked records
+  s->lockRecords();
+  quiz_assert(s->numberOfRecords() == 1);
+
+  s->unlockRecords();
+  quiz_assert(s->numberOfRecords() == 4);
+  Storage::Record::Data a = s->recordNamed("keepA.py").value();
+  quiz_assert(a.size == strlen(d) && memcmp(a.buffer, d, a.size) == 0);
+  Storage::Record::Data c = s->recordNamed("keepC.py").value();
+  quiz_assert(c.size == strlen(e) && memcmp(c.buffer, e, c.size) == 0);
+  quiz_assert(s->recordNamed("drop.eq").isNull());
+  quiz_assert(LockTable::isLockable(Storage::Record("keepA.py")));
+  quiz_assert(LockTable::isLockable(Storage::Record("keepC.py")));
+
+  s->destroyAllRecords();
+}

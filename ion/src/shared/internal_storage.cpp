@@ -182,12 +182,13 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithFullName(c
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(fullName);
-  if (lockable) {
-    LockTable::makeLockable(r);
+  if (!applyLockable(r, lockable)) {
+    destroyRecord(r);
+    return notifyFullnessToDelegate();
   }
   notifyChangeToDelegate(r);
-  m_lastRecordRetrieved = r;
-  m_lastRecordRetrievedPointer = newRecordAddress;
+  // The lock table may have grown before the new record: its address changed.
+  pointerOfRecord(r);
   return Record::ErrorStatus::None;
 }
 
@@ -211,12 +212,13 @@ InternalStorage::Record::ErrorStatus InternalStorage::createRecordWithExtension(
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(fullNameOfRecordStarting(newRecordAddress));
-  if (lockable) {
-    LockTable::makeLockable(r);
+  if (!applyLockable(r, lockable)) {
+    destroyRecord(r);
+    return notifyFullnessToDelegate();
   }
   notifyChangeToDelegate(r);
-  m_lastRecordRetrieved = r;
-  m_lastRecordRetrievedPointer = newRecordAddress;
+  // The lock table may have grown before the new record: its address changed.
+  pointerOfRecord(r);
   return Record::ErrorStatus::None;
 }
 
@@ -345,17 +347,31 @@ void InternalStorage::destroyRecordsWithExtension(const char * extension) {
 
 // NOTE: Maybe no more destroyNotLockedRecords :'(
 void InternalStorage::lockRecords() {
-  char * last = m_buffer;
-  for (auto * p : *this) {
-    const char * fname = fullNameOfRecordStarting(p);
-    Record r(fname);
-    record_size_t s = sizeOfRecordStarting(p);
+  if (m_lockOffset != 0) {
+    return;
+  }
+  Record::Data table = LockTable::tableValue();
 
-    if (LockTable::isLockable(r)) {
-      memmove(p, last, s);
-      last += s;
-      continue;
+  char * last = m_buffer;
+  char * p = m_buffer;
+
+  for (;p < m_buffer + k_storageSize;) {
+    record_size_t size = sizeOfRecordStarting(p);
+
+    if (size == 0) break;
+
+    Record r(fullNameOfRecordStarting(p));
+
+    bool isTable = LockTable::isTable(r);
+
+    if (isTable || LockTable::isLockableIn(table, r)) {
+      if (isTable) {
+        table.buffer = last + ((const char *)table.buffer - p);
+      }
+      memmove(last, p, size);
+      last += size;
     }
+    p += size;
   }
   overrideSizeAtPosition(last, 0);
 
@@ -411,6 +427,9 @@ InternalStorage::Record::ErrorStatus InternalStorage::setFullNameOfRecord(const 
     }
     overrideSizeAtPosition(p, newRecordSize);
     overrideFullNameAtPosition(p + sizeof(record_size_t), fullName);
+
+    LockTable::rename(record, Record(fullName));
+
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
@@ -436,7 +455,9 @@ InternalStorage::Record::ErrorStatus InternalStorage::setBaseNameWithExtensionOf
     char * fullNamePosition = p + sizeof(record_size_t);
     overrideBaseNameWithExtensionAtPosition(fullNamePosition, baseName, extension);
     // Recompute the CRC32
+    Record oldRecord = record;
     record = Record(fullNamePosition);
+    LockTable::rename(oldRecord, record);
     notifyChangeToDelegate(record);
     m_lastRecordRetrieved = record;
     m_lastRecordRetrievedPointer = p;
@@ -479,6 +500,17 @@ InternalStorage::Record::ErrorStatus InternalStorage::setValueOfRecord(Record re
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
+bool InternalStorage::applyLockable(Record record, bool lockable) {
+  if (m_lockOffset != 0) {
+    return true;
+  }
+  if (lockable) {
+    return LockTable::makeLockable(record);
+  }
+  LockTable::remove(record);
+  return true;
+}
+
 InternalStorage::Record::ErrorStatus InternalStorage::appendToRecord(Record record, const void * bytes, size_t size)
 {
   char * p = pointerOfRecord(record);
@@ -508,6 +540,7 @@ void InternalStorage::destroyRecord(Record record) {
   if (record.isNull()) {
     return;
   }
+  LockTable::remove(record);
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);

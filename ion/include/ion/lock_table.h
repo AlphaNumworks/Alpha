@@ -19,7 +19,16 @@ public:
   static bool makeLockable(InternalStorage::Record r);
   static bool makeNotLockable(InternalStorage::Record r);
 
+  static void remove(InternalStorage::Record r);
+  static void rename(InternalStorage::Record oldRecord, InternalStorage::Record newRecord);
+
+  static bool isTable(InternalStorage::Record r);
+  static InternalStorage::Record::Data tableValue();
+  static bool isLockableIn(InternalStorage::Record::Data table, InternalStorage::Record r);
+
 protected:
+  static bool isLocked();
+  static char * entryPtr(InternalStorage::Record::Data table, uint32_t crc);
   static char * lockvPtr(InternalStorage::Record r);
   static char * createLockv(InternalStorage::Record r);
 };

@@ -149,10 +149,11 @@ protected:
     char * m_recordStart;
   };
   RecordIterator begin() const {
-    if (sizeOfRecordStarting((char *)m_buffer) == 0) {
+    char * first = (char *)m_buffer + m_lockOffset;
+    if (sizeOfRecordStarting(first) == 0) {
       return nullptr;
     }
-    return RecordIterator((char *)m_buffer + m_lockOffset);
+    return RecordIterator(first);
   };
   RecordIterator end() const { return RecordIterator(nullptr); }
 
@@ -169,6 +170,8 @@ private:
   Record::Data        valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
   Record::ErrorStatus appendToRecord(const Record record, const void * bytes, size_t size);
+
+  bool applyLockable(const Record record, bool lockable);
 
   /* Overriders */
   size_t overrideSizeAtPosition(char * position, record_size_t size);
