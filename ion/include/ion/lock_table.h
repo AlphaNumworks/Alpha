@@ -2,7 +2,6 @@
 #define ION_LOCK_TABLE_H
 
 #include "ion/storage.h"
-#include <cstdint>
 
 namespace Ion {
 
