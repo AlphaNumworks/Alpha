@@ -38,7 +38,7 @@ namespace Sprites
 
             /* TableViewDataSource */
             int numberOfRows() const override;
-            int numberOfColumns() const override;
+            int numberOfColumns() const override { return 2; };
             void willDisplayCellAtLocation(HighlightCell * cell, int i, int j) override;
             KDCoordinate columnWidth(int i) override;
             KDCoordinate rowHeight(int j) override { return Metric::StoreRowHeight; }
@@ -56,19 +56,22 @@ namespace Sprites
 
             /* TextFieldDelegate */
             bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-            bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
+            bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override { return false; };
             bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
             bool textFieldDidAbortEditing(TextField * textField) override;
             bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
 
             /* ButtonRowDelegate */
-            int numberOfButtons(ButtonRowController::Position position) const override;
+            int numberOfButtons(ButtonRowController::Position position) const override { return 1; };
             Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
         private:
             static constexpr int k_maxNumberOfDisplayableSpriteCells = 5;
             static constexpr int k_parametersColumbWidth = Metric::EllipsisCellWidth;
-            // static constexpr int
+            static constexpr int AddSpriteCellType = 0;
+            static constexpr int SpriteCellType = 1;
+            static constexpr int SpriteParameterCellType = 2;
+            static constexpr int EmptyCellType = 3;
 
             void addSprite();
     };
