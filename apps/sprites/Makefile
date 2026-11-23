@@ -5,6 +5,7 @@ SFLAGS += -DHAS_SPRITE
 
 app_sprites_src = $(addprefix apps/sprites/,\
 	app.cpp \
+	sprite/sprite.cpp \
 )
 
 # app_code_test_src = $(addprefix apps/code/,\
@@ -25,7 +26,7 @@ app_sprites_src = $(addprefix apps/sprites/,\
 # app_code_src += $(app_code_test_src)
 apps_src += $(app_sprites_src)
 
-i18n_files += $(call i18n_with_universal_for,sprites/base)
+i18n_files += $(call i18n_with_universal_for,sprites/i18n/base)
 # i18n_files += $(call i18n_with_universal_for,sprites/catalog)
 # i18n_files += $(call i18n_with_universal_for,sprites/toolbox)
 
