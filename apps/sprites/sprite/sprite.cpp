@@ -53,7 +53,7 @@ namespace Sprites
         Data d = this->value();
 
         if (idx >= d.size) {
-            // TODO: Return status
+            // TODO: Return a status
             return;
         }
 
