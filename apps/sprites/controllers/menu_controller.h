@@ -81,6 +81,7 @@ namespace Sprites
             void editSpriteAtIndex(size_t idx);
 
             SpriteStore * m_spriteStore;
+            SelectableTableView m_selectableTableView;
     };
 
 }

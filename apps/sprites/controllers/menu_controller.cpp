@@ -15,15 +15,17 @@ namespace Sprites
     ) : 
         ViewController(parentResponder),
         // ButtonRowDelegate(nullptr, footer),
-        m_spriteStore(store)
+        m_spriteStore(store),
+        m_selectableTableView(this, this, this, this)
     {
-        // Init
+        m_selectableTableView.setMargins(0);
+        m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::Arrows);
     }
 
     StackViewController * MenuController::stackViewController(void)
     {
         // TODO: Return actual stackview controller
-        return nullptr;
+        return static_cast<StackViewController *>(parentResponder()->parentResponder());
     }
 
     void MenuController::willExitResponderChain(Responder * nfr)
@@ -34,8 +36,7 @@ namespace Sprites
     /* ViewController */
     View * MenuController::view(void) 
     {
-        // TODO: C'mon, do smth
-        return nullptr;
+        return &m_selectableTableView;
     }
 
     bool MenuController::handleEvent(Ion::Events::Event evt)
@@ -52,8 +53,7 @@ namespace Sprites
 
     void MenuController::viewWillAppear(void)
     {
-        // TODO: Do smth
-        return;
+        ViewController::viewWillAppear();
     }
 
     /* Table view datasource */
