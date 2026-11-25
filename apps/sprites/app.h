@@ -2,6 +2,8 @@
     #define SPRITES_APP_H
     #include "apps/shared/input_event_handler_delegate_app.h"
     #include "apps/shared/shared_app.h"
+    #include "apps/sprites/store/sprite_store.hpp"
+    #include "apps/sprites/controllers/menu_controller.h"
     #include <escher.h>
 
 namespace Sprites
@@ -25,6 +27,9 @@ class App : public Shared::InputEventHandlerDelegateApp
                 Snapshot();
                 App *        unpack(Container * container) override;
                 Descriptor * descriptor() override;
+                SpriteStore * spriteStore() { return &m_store; };
+            private:
+                SpriteStore m_store;
         };
 
         static App * app() {
@@ -36,11 +41,16 @@ class App : public Shared::InputEventHandlerDelegateApp
 
         bool prepareForExit() override;
 
+        MenuController * menuController(void) { return &m_menuController; }
+        StackViewController * stackViewController(void) { return &m_stackViewController; }
+
         bool handleEvent(Ion::Events::Event event) override;
         void willExitResponderChain(Responder * nextFirstResponder) override;
 
     private:
         App(Snapshot * snapshot);
+        MenuController      m_menuController;
+        StackViewController m_stackViewController;
 };
 
 }

@@ -1,10 +1,12 @@
 #ifndef SPRITES_MENU_CONTROLLER_H
     #define SPRITES_MENU_CONTROLLER_H
 
-#include "apps/sprites/app.h"
 #include "apps/sprites/store/sprite_store.hpp"
+#include "escher/app.h"
 #include "escher/button_row_controller.h"
+#include "escher/selectable_table_view.h"
 #include "escher/selectable_table_view_data_source.h"
+#include "escher/stack_view_controller.h"
 #include "escher/table_view_data_source.h"
 #include "escher/text_field_delegate.h"
 #include "escher/view_controller.h"
@@ -23,6 +25,7 @@ namespace Sprites
             MenuController(
                 Responder * parentResponder,
                 App * spritesDelegate,
+                SpriteStore * store,
                 ButtonRowController * footer
             );
 
@@ -50,7 +53,6 @@ namespace Sprites
             HighlightCell * reusableCell(int index, int type) override;
             int reusableCellCount(int type) override;
             int typeAtLocation(int i, int j) override;
-            void willDisplayScriptTitleCellForIndex(HighlightCell * cell, int index);
 
             /* SelectableTableViewDelegate */
             void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
@@ -62,6 +64,7 @@ namespace Sprites
             bool textFieldDidAbortEditing(TextField * textField) override;
             bool textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) override;
 
+            // FIXME: Maybe the Sprite Store dont need to have buttons
             /* ButtonRowDelegate */
             int numberOfButtons(ButtonRowController::Position position) const override { return 1; };
             Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;

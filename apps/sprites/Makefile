@@ -6,6 +6,8 @@ SFLAGS += -DHAS_SPRITE
 app_sprites_src = $(addprefix apps/sprites/,\
 	app.cpp \
 	sprite/sprite.cpp \
+	controllers/menu_controller.cpp \
+	store/sprite_store.cpp \
 )
 
 # app_code_test_src = $(addprefix apps/code/,\

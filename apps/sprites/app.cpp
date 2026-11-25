@@ -36,8 +36,12 @@ namespace Sprites
         return &descriptor;
     }
 
-    App::App(Snapshot * snapshot) : Shared::InputEventHandlerDelegateApp(snapshot, nullptr) {
-
+    App::App(Snapshot * snapshot) :
+        Shared::InputEventHandlerDelegateApp(snapshot, &m_stackViewController),
+        m_menuController(&m_modalViewController, this, snapshot->spriteStore(), nullptr),
+        m_stackViewController(&m_modalViewController, nullptr)
+    {
+        // Pass
     }
 
     App::~App() {
