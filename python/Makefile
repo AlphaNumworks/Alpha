@@ -1,7 +1,7 @@
 SFLAGS += -Ipython/src
 SFLAGS += -Ipython/port
 SFLAGS += -I$(BUILD_DIR)/python/port
-SFLAGS += -DEPSILON_VERSION="$(EPSILON_VERSION)" -DOMEGA_VERSION="$(OMEGA_VERSION)" -DUPSILON_VERSION="$(UPSILON_VERSION)" -DMU_VERSION="$(MU_VERSION)"
+SFLAGS += -DEPSILON_VERSION="$(EPSILON_VERSION)" -DOMEGA_VERSION="$(OMEGA_VERSION)" -DUPSILON_VERSION="$(UPSILON_VERSION)" -DALPHA_VERSION="$(ALPHA_VERSION)"
 
 # How to maintain this Makefile
 # - Copy PY_CORE_O_BASENAME from py.mk into py_src
@@ -167,26 +167,26 @@ port_src += $(addprefix python/port/,\
   mod/turtle/modturtle_table.c \
   mod/turtle/turtle.cpp \
   \
-  mod/mu/modmu.cpp \
-  mod/mu/modmu_table.c \
+  mod/alpha/modalpha.cpp \
+  mod/alpha/modalpha_table.c \
   \
-  mod/mu/app/modmu_app.cpp \
-  mod/mu/app/modmu_app_table.c \
+  mod/alpha/app/modalpha_app.cpp \
+  mod/alpha/app/modalpha_app_table.c \
   \
-  mod/mu/scenes/modmu_scene.cpp \
-  mod/mu/scenes/modmu_scene_table.c \
+  mod/alpha/scenes/modalpha_scene.cpp \
+  mod/alpha/scenes/modalpha_scene_table.c \
   \
-  mod/mu/scenemanager/modmu_scenemgr.cpp \
-  mod/mu/scenemanager/modmu_scenemgr_table.c \
+  mod/alpha/scenemanager/modalpha_scenemgr.cpp \
+  mod/alpha/scenemanager/modalpha_scenemgr_table.c \
   \
-  mod/mu/keyboard/modmu_keyboard.cpp \
-  mod/mu/keyboard/modmu_keyboard_table.c \
+  mod/alpha/keyboard/modalpha_keyboard.cpp \
+  mod/alpha/keyboard/modalpha_keyboard_table.c \
   \
-  mod/mu/events/modmu_event.cpp \
-  mod/mu/events/modmu_event_table.c \
+  mod/alpha/events/modalpha_event.cpp \
+  mod/alpha/events/modalpha_event_table.c \
   \
-  mod/mu/events/bus/modmu_eventbus.cpp \
-  mod/mu/events/bus/modmu_eventbus_table.c \
+  mod/alpha/events/bus/modalpha_eventbus.cpp \
+  mod/alpha/events/bus/modalpha_eventbus_table.c \
   \
   mphalport.c \
 )
@@ -276,6 +276,6 @@ tests_src += $(addprefix python/test/,\
   time.cpp \
   turtle.cpp \
   matplotlib.cpp \
-  mu.cpp \
+  alpha.cpp \
   ulab.cpp \
 )

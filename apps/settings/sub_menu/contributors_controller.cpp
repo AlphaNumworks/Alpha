@@ -30,7 +30,7 @@ int ContributorsController::reusableCellCount(int type) {
   return k_totalNumberOfCell;
 }
 
-constexpr static short s_numberOfMuDevelopers = 2; 
+constexpr static short s_numberOfAlphaDevelopers = 2; 
 constexpr static int s_numberOfUpsilonDevelopers = 5;
 
 // Hope it works with constexpr
@@ -62,9 +62,9 @@ constexpr static I18n::Message s_developersUsernames[s_numberOfDevelopers] = {
 void ContributorsController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   MessageTableCellWithBuffer * myTextCell = (MessageTableCellWithBuffer *)cell;
   myTextCell->setAccessoryText(I18n::translate(s_developersUsernames[index]));
-  if (index < s_numberOfMuDevelopers) {
+  if (index < s_numberOfAlphaDevelopers) {
     myTextCell->setTextColor(KDColor::RGB24(0x7e008d));
-  } else if (index < s_numberOfUpsilonDevelopers + s_numberOfMuDevelopers) {
+  } else if (index < s_numberOfUpsilonDevelopers + s_numberOfAlphaDevelopers) {
     myTextCell->setTextColor(KDColor::RGB24(0x5e81ac));
   } else {
     myTextCell->setTextColor(KDColor::RGB24(0xc53431));

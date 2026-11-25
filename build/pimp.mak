@@ -8,7 +8,7 @@ PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m     / __  / /_/ /     \n")
 PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m    /_/ /_/\__,_/      \n")
 PLS_IGNORE := $(shell >&2 printf "\e[0;34m   - Moo moo \e[0m\n")
 PLS_IGNORE := $(shell >&2 printf "\n")
-PLS_IGNORE := $(shell >&2 printf "\e[32mBuilding M$(MU_VERSION)-E$(EPSILON_VERSION)\n")
+PLS_IGNORE := $(shell >&2 printf "\e[32mBuilding A$(ALPHA_VERSION)-E$(EPSILON_VERSION)\n")
 
 ifeq (${PLATFORM},device)
   DISPLAY_TARGET = Numworks $(MODEL)

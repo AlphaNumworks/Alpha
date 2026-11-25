@@ -533,16 +533,16 @@ Q(ht)
 Q(isvisible)
 Q(colormode)
 
-// Mu::KNW QSTRs
-Q(mu)
+// Alpha::KNW QSTRs
+Q(alpha)
 
-// Mu keyboard QSTRs
+// Alpha keyboard QSTRs
 Q(Keyboard)
 Q(update)
 Q(release)
 Q(press)
 
-// Mu App QSTRs
+// Alpha App QSTRs
 Q(App)
 Q(run)
 Q(scenes)
@@ -550,7 +550,7 @@ Q(keyboard)
 Q(events)
 Q(set_tickrate)
 
-// Mu Scene QSTRs
+// Alpha Scene QSTRs
 Q(Scene)
 Q(is_dirty)
 Q(mark_dirty)
@@ -560,19 +560,19 @@ Q(on_dispose)
 Q(update)
 Q(render)
 
-// Mu SceneManager QSTRs
+// Alpha SceneManager QSTRs
 Q(SceneManager)
 Q(push)
 Q(pop)
 Q(current)
 Q(change)
 
-// Mu Event QSTRs
+// Alpha Event QSTRs
 Q(Event)
 Q(type)
 Q(data)
 
-// Mu EventBus QSTRs
+// Alpha EventBus QSTRs
 Q(EventBus)
 Q(dispatch)
 Q(subscribe)

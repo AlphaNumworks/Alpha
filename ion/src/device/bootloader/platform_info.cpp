@@ -18,8 +18,8 @@
 #error This file expects UPSILON_VERSION to be defined
 #endif
 
-#ifndef MU_VERSION
-#error This file excepts MU_VERSION to be defined
+#ifndef ALPHA_VERSION
+#error This file excepts ALPHA_VERSION to be defined
 #endif
 
 extern "C" {
@@ -105,9 +105,9 @@ struct UserlandHeader {
   const char m_UpsilonVersion[16];
   uint32_t m_osType;
   uint32_t m_upsilonMagicFooter;
-  uint32_t m_muMagicHeader;
-  const char m_MuVersion[16];
-  uint32_t m_muMagicFooter;
+  uint32_t m_alphaMagicHeader;
+  const char m_AlphaVersion[16];
+  uint32_t m_alphaMagicFooter;
   uint32_t m_upsilonExtraMagicHeader;
   recoveryStartPointerType m_recoveryAddress;
   uint32_t m_extraVersion;
@@ -118,7 +118,7 @@ constexpr static uint32_t OmegaMagic = 0xEFBEADDE;
 constexpr static uint32_t UpsilonMagic = 0x55707369;
 constexpr static uint32_t OSType = 0x79827178;
 constexpr static uint32_t UpsilonExtraMagic = 0xaa7073ff;
-constexpr static uint32_t MuMagic = 0x7E008D67;
+constexpr static uint32_t AlphaMagic = 0x7E008D67;
 
 const UserlandHeader __attribute__((section(".userland_header"), used)) k_userlandHeader = {
   .m_header = Magic,
@@ -151,9 +151,9 @@ const UserlandHeader __attribute__((section(".userland_header"), used)) k_userla
   .m_UpsilonVersion = {UPSILON_VERSION},
   .m_osType = OSType,
   .m_upsilonMagicFooter = UpsilonMagic,
-  .m_muMagicHeader = MuMagic,
-  .m_MuVersion = {MU_VERSION},
-  .m_muMagicFooter = MuMagic,
+  .m_alphaMagicHeader = AlphaMagic,
+  .m_AlphaVersion = {ALPHA_VERSION},
+  .m_alphaMagicFooter = AlphaMagic,
   .m_upsilonExtraMagicHeader = UpsilonExtraMagic,
   .m_recoveryAddress = recoveryStartPointer,
   .m_extraVersion = 1,
@@ -190,8 +190,8 @@ const char * Ion::omegaVersion() {
   return k_omega_version;
 }
 
-const char * Ion::muVersion() {
-  return k_userlandHeader.m_MuVersion;
+const char * Ion::alphaVersion() {
+  return k_userlandHeader.m_AlphaVersion;
 }
 
 const char * Ion::upsilonVersion() {
