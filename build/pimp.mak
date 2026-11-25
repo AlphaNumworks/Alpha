@@ -1,14 +1,15 @@
 # You gotta PIMP MY CALC
 
 ifndef NO_PIMP
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m        __  __         \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m       / / / /_  __    \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m      / /_/ / / / /    \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m     / __  / /_/ /     \n")
-PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m    /_/ /_/\__,_/      \n")
-PLS_IGNORE := $(shell >&2 printf "\e[0;34m   - Moo moo \e[0m\n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m        ___    __      __         \n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m       /   |  / /___  / /_  ____ _\n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m      / /| | / / __ \\/ __ \\/ __ \`/\n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m     / ___ |/ / /_/ / / / / /_/ / \n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m    /_/  |_/_/ .___/_/ /_/\\__,_/  \n")
+PLS_IGNORE := $(shell >&2 printf "\e[91m\e[36m            /_/                   \n")
+PLS_IGNORE := $(shell >&2 printf "\e[0;34m   - Awoooo \e[0m\n")
 PLS_IGNORE := $(shell >&2 printf "\n")
-PLS_IGNORE := $(shell >&2 printf "\e[32mBuilding M$(MU_VERSION)-E$(EPSILON_VERSION)\n")
+PLS_IGNORE := $(shell >&2 printf "\e[32mBuilding A$(ALPHA_VERSION)-E$(EPSILON_VERSION)\n")
 
 ifeq (${PLATFORM},device)
   DISPLAY_TARGET = Numworks $(MODEL)

@@ -14,7 +14,7 @@ namespace Ion {
  * A record's fullName is baseName.extension.
  *
  * There is no longer Lockv in record cuz of Epsilon and Upsilon workshop.
- * Mu cannot be only available for python transfer on its own site.
+ * Alpha cannot be only available for python transfer on its own site.
  * 
  * Instead, a lock.meta file should be created at the very root of the storage :
  * Its a vector of CRC32 hashed name matching with lockv.

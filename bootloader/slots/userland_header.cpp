@@ -32,12 +32,12 @@ const char * UserlandHeader::upsilonVersion() const {
   return m_UpsilonVersion;
 }
 
-const bool UserlandHeader::isMu() const {
-  return m_muMagicHeader == MuMagic && m_muMagicFooter == MuMagic;
+const bool UserlandHeader::isAlpha() const {
+  return m_alphaMagicHeader == AlphaMagic && m_alphaMagicFooter == AlphaMagic;
 }
 
-const char * UserlandHeader::muVersion() const {
-  return m_MuVersion;
+const char * UserlandHeader::alphaVersion() const {
+  return m_AlphaVersion;
 }
 
 const void * UserlandHeader::storageAddress() const {
