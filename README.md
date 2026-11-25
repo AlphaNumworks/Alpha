@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-525252.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>
-  <a href="https://github.com/GauthierMalfilatre/Mu/issues"><img alt="Issues" src="https://img.shields.io/github/issues/GauthierMalfilatre/Mu.svg?labelColor=292929&logo=git&style=for-the-badge" /></a>
+  <a href="https://github.com/AlphaNumworks/Alpha/issues"><img alt="Issues" src="https://img.shields.io/github/issues/AlphaNumworks/Alpha.svg?labelColor=292929&logo=git&style=for-the-badge" /></a>
   <br/>
   <a href="https://discord.gg/hjVdXHz6EJ"><img alt="Discord" src="https://img.shields.io/discord/1564006769267843342?color=blue&labelColor=292929&label=chat%20-%20discord&logo=discord&style=for-the-badge" /></a>
 </p>
@@ -262,12 +262,12 @@ You can now go to step 2!
 
 ### 2. Set up repo
 
-Clone repo and use 'mu-dev' branch by pasting these two commands:
+Clone repo and use 'alpha-dev' branch by pasting these two commands:
 
 ```bash
-git clone --recursive https://github.com/GauthierMalfilatre/Mu.git
-cd Mu
-git checkout mu-dev
+git clone --recursive https://github.com/AlphaNumworks/Alpha.git
+cd Alpha
+git checkout alpha-dev
 ```
 
 <br>
@@ -432,9 +432,9 @@ The simulator is now in `output/release/simulator/web/simulator.zip`
 You need devkitPro and devkitARM installed and in your path (instructions [here](https://devkitpro.org/wiki/Getting_Started))
 
 ```bash
-git clone --recursive https://github.com/GauthierMalfilatre/Mu.git
-cd Mu
-git checkout mu-dev
+git clone --recursive https://github.com/AlphaNumworks/Alpha.git
+cd Alpha
+git checkout alpha-dev
 make PLATFORM=simulator TARGET=3ds -j$(nproc)
 ```
 
@@ -473,9 +473,9 @@ First, install gint and fxsdk along with a cross compiler for the calculator. Th
 
 Next:
 ```bash
-git clone --recursive https://github.com/GauthierMalfilatre/Mu.git
-cd Mu
-git checkout mu-dev
+git clone --recursive https://github.com/AlphaNumworks/Alpha.git
+cd Alpha
+git checkout alpha-dev
 make PLATFORM=simulator TARGET=fxcg -j$(nproc)
 ```
 Then copy the file at `./output/release/simulator/fxcg/epsilon.g3a` to the calculator over USB.

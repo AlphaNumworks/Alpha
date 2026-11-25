@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-525252.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>
-  <a href="https://github.com/GauthierMalfilatre/Mu/issues"><img alt="Issues" src="https://img.shields.io/github/issues/GauthierMalfilatre/Mu.svg?labelColor=292929&logo=git&style=for-the-badge" /></a>
+  <a href="https://github.com/AlphaNumworks/Alpha/issues"><img alt="Issues" src="https://img.shields.io/github/issues/AlphaNumworks/Alpha.svg?labelColor=292929&logo=git&style=for-the-badge" /></a>
   <br/>
   <a href="https://discord.gg/hjVdXHz6EJ"><img alt="Discord" src="https://img.shields.io/discord/1564006769267843342?color=blue&labelColor=292929&label=chat%20-%20discord&logo=discord&style=for-the-badge" /></a>
 </p>
@@ -258,9 +258,9 @@ Vous pouvez aller à l'étape 2.
 Le code source est disponible dans une repository git. Récupérez-le de cette manière :
 
 ```bash
-git clone --recursive https://github.com/GauthierMalfilatre/Mu.git
-cd Mu
-git checkout mu-dev
+git clone --recursive https://github.com/AlphaNumworks/Alpha.git
+cd Alpha
+git checkout alpha-dev
 ```
 
 <br>
@@ -445,9 +445,9 @@ Le fichier compilé nommé `epsilon.apk` sera celui à installer sur le téléph
 Il vous faut devkitPro et devkitARM installés et dans votre path (les instructions sont [ici](https://devkitpro.org/wiki/Getting_Started))
 
 ```bash
-git clone --recursive https://github.com/GauthierMalfilatre/Mu.git
-cd Mu
-git checkout --recursive upsilon-dev
+git clone --recursive https://github.com/AlphaNumworks/Alpha.git
+cd Alpha
+git checkout alpha-dev
 make PLATFORM=simulator TARGET=3ds -j
 ```
 
