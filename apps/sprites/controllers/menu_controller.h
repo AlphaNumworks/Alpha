@@ -2,6 +2,7 @@
     #define SPRITES_MENU_CONTROLLER_H
 
 #include "apps/sprites/app.h"
+#include "apps/sprites/store/sprite_store.hpp"
 #include "escher/button_row_controller.h"
 #include "escher/selectable_table_view_data_source.h"
 #include "escher/table_view_data_source.h"
@@ -74,6 +75,9 @@ namespace Sprites
             static constexpr int EmptyCellType = 3;
 
             void addSprite();
+            void editSpriteAtIndex(size_t idx);
+
+            SpriteStore * m_spriteStore;
     };
 
 }
