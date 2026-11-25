@@ -63,7 +63,7 @@ void ContributorsController::willDisplayCellForIndex(HighlightCell * cell, int i
   MessageTableCellWithBuffer * myTextCell = (MessageTableCellWithBuffer *)cell;
   myTextCell->setAccessoryText(I18n::translate(s_developersUsernames[index]));
   if (index < s_numberOfAlphaDevelopers) {
-    myTextCell->setTextColor(KDColor::RGB24(0x7e008d));
+    myTextCell->setTextColor(KDColor::RGB24(0x00BB77));
   } else if (index < s_numberOfUpsilonDevelopers + s_numberOfAlphaDevelopers) {
     myTextCell->setTextColor(KDColor::RGB24(0x5e81ac));
   } else {
