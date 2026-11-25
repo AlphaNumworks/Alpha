@@ -1,4 +1,4 @@
-<p align="center"><img src="./.github/assets/mu-banner.png" alt="Mu" /></p>
+<p align="center"><img src="./.github/assets/alpha-banner.png" alt="Alpha" /></p>
 
 <p align="center">
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-525252.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>
@@ -11,9 +11,9 @@
 
 ## About
 
-Mu is a fork of [Upsilon](https://github.com/UpsilonNumworks/Upsilon), itself a fork of Omega, a user-made OS for the NumWorks calculator. Omega was discontinued because of a policy change from NumWorks, and Upsilon carried it on. Mu continues that work for the people who want to keep seeing user-made OSes for NumWorks.
+Alpha is a fork of [Upsilon](https://github.com/UpsilonNumworks/Upsilon), itself a fork of Omega, a user-made OS for the NumWorks calculator. Omega was discontinued because of a policy change from NumWorks, and Upsilon carried it on. Alpha continues that work for the people who want to keep seeing user-made OSes for NumWorks.
 
-Mu is made by Gauthier Malfilatre and Eliott Damagnez.
+Alpha is made by Gauthier Malfilatre and Eliott Damagnez.
 
 ### Some new features
 
@@ -518,7 +518,7 @@ Here are the main links toward Omega's different websites and repositories, that
 
 ## About Epsilon
 
-Mu is a fork of Upsilon, which is a fork of Omega.
+Alpha is a fork of Upsilon, which is a fork of Omega.
 
 Omega is a fork of Epsilon, a high-performance graphing calculator operating system. It includes eight apps that cover the high school mathematics curriculum.
 
@@ -533,4 +533,4 @@ NumWorks SAS, Nintendo of America Inc and Casio aren't associated in any shape o
 
 - NumWorks Epsilon is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 - Omega is released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-- Mu and Upsilon are released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+- Alpha and Upsilon are released under a [CC BY-NC-SA License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).

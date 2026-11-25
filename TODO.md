@@ -1,7 +1,7 @@
 # TODO
 
 ## OS
-- [X] Mu python module, providing advanced objects to improve game dev in numworks (pygame like ?)
+- [X] Alpha python module, providing advanced objects to improve game dev in numworks (pygame like ?)
 - [X] Debug mode
     - [X] FPS / Targetted FPS
     - [X] GC state (used / total (percentage))
@@ -14,7 +14,7 @@
     - [X] New records cannot be named the same as a locked record
     - [X] Records from official epsilon site having a auto lockv, and removing lockv on retrieving
 - [X] New theme
-- [ ] New DA / Logo / Name ?? (delta)
+- [ ] New DA / Logo / Name ?? (Alpha)
 - [ ] Custom application order AND hideable applications
 - [ ] Files application
 - [ ] Calendar application
@@ -24,8 +24,8 @@
 - [ ] A website (w/ github pages?)
 - [ ] Download bootloader AND slots with website
 - [ ] Dynamic changelog (maybe admin page)
-- [ ] Forum and news like TI planet but for numworks or mu/delta ?
+- [ ] Forum and news like TI planet but for numworks or Alpha ?
 
 ## Other
 - [ ] Fully setup discord server
-- [ ] Github organisation with other repos : the os, the website, the design, the python module for python game dev on PC for mu/delta ?
+- [ ] Github organisation with other repos : the os, the website, the design, the python module for python game dev on PC for Alpha ?

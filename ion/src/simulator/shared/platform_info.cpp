@@ -18,8 +18,8 @@
 #error This file expects UPSILON_VERSION to be defined
 #endif
 
-#ifndef MU_VERSION
-#error This file expects MU_VERSION to be defined
+#ifndef ALPHA_VERSION
+#error This file expects ALPHA_VERSION to be defined
 #endif
 
 #ifndef HEADER_SECTION
@@ -52,9 +52,9 @@ public:
     m_upsilonVersion{UPSILON_VERSION},
     m_osType(OSType),
     m_upsilonMagicFooter(UpsilonMagic),
-    m_muMagicHeader(MuMagic),
-    m_muVersion{MU_VERSION},
-    m_muMagicFooter(MuMagic) { }
+    m_alphaMagicHeader(AlphaMagic),
+    m_alphaVersion{ALPHA_VERSION},
+    m_alphaMagicFooter(AlphaMagic) { }
 
   const char * version() const {
     assert(m_storageAddress != nullptr);
@@ -65,7 +65,7 @@ public:
     assert(m_omegaMagicFooter == OmegaMagic);
     return m_version;
   }
-  const char * muVersion() const {
+  const char * alphaVersion() const {
     assert(m_storageAddress != nullptr);
     assert(m_storageSize != 0);
     assert(m_header == Magic);
@@ -74,9 +74,9 @@ public:
     assert(m_omegaMagicFooter == OmegaMagic);
     assert(m_upsilonMagicHeader == UpsilonMagic);
     assert(m_upsilonMagicFooter == UpsilonMagic);
-    assert(m_muMagicHeader == MuMagic);
-    assert(m_muMagicFooter == MuMagic);
-    return m_muVersion;
+    assert(m_alphaMagicHeader == AlphaMagic);
+    assert(m_alphaMagicFooter == AlphaMagic);
+    return m_alphaVersion;
   }
   const char * upsilonVersion() const {
     assert(m_storageAddress != nullptr);
@@ -123,7 +123,7 @@ private:
   constexpr static uint32_t Magic = 0xDEC00DF0;
   constexpr static uint32_t OmegaMagic = 0xEFBEADDE;
   constexpr static uint32_t UpsilonMagic = 0x55707369;
-  constexpr static uint32_t MuMagic = 0x7e008d67;
+  constexpr static uint32_t AlphaMagic = 0x7e008d67;
   constexpr static uint32_t OSType = 0x79827178;
   uint32_t m_header;
   const char m_version[8];
@@ -139,9 +139,9 @@ private:
   const char m_upsilonVersion[16];
   uint32_t m_osType;
   uint32_t m_upsilonMagicFooter;
-  uint32_t m_muMagicHeader;
-  const char m_muVersion[16];
-  uint32_t m_muMagicFooter;
+  uint32_t m_alphaMagicHeader;
+  const char m_alphaVersion[16];
+  uint32_t m_alphaMagicFooter;
 
 };
 
@@ -151,8 +151,8 @@ const char * Ion::softwareVersion() {
   return platform_infos.version();
 }
 
-const char * Ion::muVersion() {
-  return platform_infos.muVersion();
+const char * Ion::alphaVersion() {
+  return platform_infos.alphaVersion();
 }
 
 const char * Ion::upsilonVersion() {

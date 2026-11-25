@@ -1,4 +1,4 @@
-<p align="center"><img src="./.github/assets/mu-banner.png" alt="Mu" /></p>
+<p align="center"><img src="./.github/assets/alpha-banner.png" alt="Alpha" /></p>
 
 <p align="center">
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="cc by-nc-sa 4.0" src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-525252.svg?labelColor=292929&logo=creative%20commons&style=for-the-badge" /></a>
@@ -11,9 +11,9 @@
 
 ## À propos
 
-Mu est un fork d'[Upsilon](https://github.com/UpsilonNumworks/Upsilon), lui-même un fork d'Omega, un OS créé par des utilisateurs pour les calculatrices NumWorks. Omega a été arrêté après un changement de politique de NumWorks, et Upsilon a pris le relais. Mu poursuit ce travail pour ceux qui veulent continuer à voir des OS créés par les utilisateurs pour NumWorks.
+Alpha est un fork d'[Upsilon](https://github.com/UpsilonNumworks/Upsilon), lui-même un fork d'Omega, un OS créé par des utilisateurs pour les calculatrices NumWorks. Omega a été arrêté après un changement de politique de NumWorks, et Upsilon a pris le relais. Alpha poursuit ce travail pour ceux qui veulent continuer à voir des OS créés par les utilisateurs pour NumWorks.
 
-Mu est réalisé par Gauthier Malfilatre et Eliott Damagnez.
+Alpha est réalisé par Gauthier Malfilatre et Eliott Damagnez.
 
 ### Quelques fonctionnalités supplémentaires
 
@@ -494,7 +494,7 @@ Les anciens projets d'Omega, avant sa fermeture, qui ont été utilisés pour ce
 
 ## À propos d'Epsilon
 
-Mu est un fork d'Upsilon, lui-même un fork d'Omega.
+Alpha est un fork d'Upsilon, lui-même un fork d'Omega.
 
 Omega est un fork d'Epsilon, un système d'exploitation performant pour calculatrices graphiques. Il inclut huit applications pour les mathématiques de lycée et d'études supérieures.
 
@@ -508,4 +508,4 @@ NumWorks SAS et Nintendo of America Inc ne sont en aucun cas associés avec ce p
 
 - NumWorks Epsilon est disponible sous [licence CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr).
 - Omega est disponible sous [licence CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr).
-- Mu et Upsilon sont disponibles sous [licence CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr).
+- Alpha et Upsilon sont disponibles sous [licence CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.fr).
