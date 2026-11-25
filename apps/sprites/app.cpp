@@ -42,9 +42,6 @@ namespace Sprites
     }
 
     bool App::handleEvent(Ion::Events::Event evt) {
-        if (evt == Ion::Events::Home) {
-            return true;
-        }
         return false;
     }
 
@@ -55,7 +52,7 @@ namespace Sprites
     bool App::prepareForExit()
     {
         // NOTE: Since we are NOT running a console controller with input loopp ?
-        return false;
+        return true;
     }
 
 }

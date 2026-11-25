@@ -1,5 +1,6 @@
 #include "apps/sprites/controllers/menu_controller.h"
 #include "escher/button_row_controller.h"
+#include "escher/container.h"
 #include "escher/responder.h"
 #include "escher/text_field.h"
 #include <cstddef>
@@ -30,7 +31,7 @@ namespace Sprites
 
     void MenuController::willExitResponderChain(Responder * nfr)
     {
-        // FEGNoepzp kzv
+        Container::activeApp()->setFirstResponder(&m_selectableTableView);
     }
 
     /* ViewController */
