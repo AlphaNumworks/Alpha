@@ -18,15 +18,15 @@ namespace Sprites
         public TableViewDataSource,
         public SelectableTableViewDataSource,
         public SelectableTableViewDelegate,
-        public TextFieldDelegate,
-        public ButtonRowDelegate
+        public TextFieldDelegate
+        // public ButtonRowDelegate
     {
         public:
             MenuController(
                 Responder * parentResponder,
                 App * spritesDelegate,
-                SpriteStore * store,
-                ButtonRowController * footer
+                SpriteStore * store
+                // ButtonRowController * footer
             );
 
             StackViewController * stackViewController();
@@ -66,8 +66,8 @@ namespace Sprites
 
             // FIXME: Maybe the Sprite Store dont need to have buttons
             /* ButtonRowDelegate */
-            int numberOfButtons(ButtonRowController::Position position) const override { return 1; };
-            Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
+            // int numberOfButtons(ButtonRowController::Position position) const override { return 1; };
+            // Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
         private:
             static constexpr int k_maxNumberOfDisplayableSpriteCells = 5;

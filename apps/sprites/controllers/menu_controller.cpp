@@ -10,11 +10,11 @@ namespace Sprites
     MenuController::MenuController(
         Responder * parentResponder,
         App * spriteDelegate,
-        SpriteStore * store,
-        ButtonRowController * footer
+        SpriteStore * store
+        // ButtonRowController * footer
     ) : 
         ViewController(parentResponder),
-        ButtonRowDelegate(nullptr, footer),
+        // ButtonRowDelegate(nullptr, footer),
         m_spriteStore(store)
     {
         // Init
@@ -168,14 +168,14 @@ namespace Sprites
 
     /* ButtonRowDelegate */
 
-    Button * MenuController::buttonAtIndex(
-        int index,
-        ButtonRowController::Position pos
-    ) const
-    {
-        // TODO: Do smth
-        return nullptr;
-    }
+    // Button * MenuController::buttonAtIndex(
+    //     int index,
+    //     ButtonRowController::Position pos
+    // ) const
+    // {
+    //     // TODO: Do smth
+    //     return nullptr;
+    // }
 
     /* Private */
 

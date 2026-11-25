@@ -14,10 +14,6 @@ namespace Sprites
         return I18n::Message::SpritesAppCapital;
     }
 
-    App::Descriptor::ExaminationLevel App::Descriptor::examinationLevel() {
-        return App::Descriptor::ExaminationLevel::Basic;
-    }
-
     const Image * App::Descriptor::icon() {
         return ImageStore::SpritesIcon;
     }
@@ -38,14 +34,11 @@ namespace Sprites
 
     App::App(Snapshot * snapshot) :
         Shared::InputEventHandlerDelegateApp(snapshot, &m_stackViewController),
-        m_menuController(&m_modalViewController, this, snapshot->spriteStore(), nullptr),
-        m_stackViewController(&m_modalViewController, nullptr)
+        // m_footer(&m_stackViewController, &m_menuController, &m_menuController),
+        m_menuController(&m_modalViewController, this, snapshot->spriteStore()),
+        m_stackViewController(&m_modalViewController, &m_menuController)
     {
         // Pass
-    }
-
-    App::~App() {
-
     }
 
     bool App::handleEvent(Ion::Events::Event evt) {
@@ -61,6 +54,7 @@ namespace Sprites
 
     bool App::prepareForExit()
     {
+        // NOTE: Since we are NOT running a console controller with input loopp ?
         return false;
     }
 

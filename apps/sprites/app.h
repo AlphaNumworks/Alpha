@@ -18,7 +18,6 @@ class App : public Shared::InputEventHandlerDelegateApp
             public:
                 I18n::Message                     name() override;
                 I18n::Message                     upperName() override;
-                App::Descriptor::ExaminationLevel examinationLevel() override;
                 const Image *                     icon() override;
         };
 
@@ -36,7 +35,6 @@ class App : public Shared::InputEventHandlerDelegateApp
             return static_cast<App *>(Container::activeApp());
         }
 
-        ~App();
         TELEMETRY_ID("Sprites");
 
         bool prepareForExit() override;
@@ -49,8 +47,8 @@ class App : public Shared::InputEventHandlerDelegateApp
 
     private:
         App(Snapshot * snapshot);
-        MenuController      m_menuController;
-        StackViewController m_stackViewController;
+        MenuController               m_menuController;
+        StackViewController          m_stackViewController;
 };
 
 }
