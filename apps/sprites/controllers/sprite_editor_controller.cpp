@@ -41,17 +41,17 @@ namespace Sprites
             return true;
         }
         if (evt == Ion::Events::Down) {
-            m_view.moveCursorByOffset(0, 1);
+            this->moveCursor(0, 1);
             return true;
         } else if (evt == Ion::Events::Up) {
-            m_view.moveCursorByOffset(0, -1);
+            this->moveCursor(0, -1);
             return true;
         }
         if (evt == Ion::Events::Left) {
-            m_view.moveCursorByOffset(-1, 0);
+            this->moveCursor(-1, 0);
             return true;
         } else if (evt == Ion::Events::Right) {
-            m_view.moveCursorByOffset(1, 0);
+            this->moveCursor(1, 0);
             return true;
         }
         if (evt == Ion::Events::Toolbox) {

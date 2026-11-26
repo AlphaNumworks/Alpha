@@ -40,6 +40,10 @@ namespace Sprites
         auto r = cellAt(m_x, m_y);
         ctx->strokeRect(r, KDColorBlack);
         ctx->strokeRect(KDRect(r.left() + 1, r.top() + 1, r.width() - 2, r.height() - 2), KDColorWhite);
+
+        auto rp = paletteAt(m_px, m_py);
+        ctx->strokeRect(rp, KDColorBlack);
+        ctx->strokeRect(KDRect(rp.left() + 1, rp.top() + 1, r.width() - 2, r.height() - 2), KDColorWhite);
     }
 
     void CanvaView::moveCursorByOffset(int offsetX, int offsetY)
@@ -52,6 +56,18 @@ namespace Sprites
             m_y += offsetY;
         }
         markRectAsDirty(cellAt(m_x, m_y));
+    }
+
+    void CanvaView::movePaletteByOffset(int offsetX, int offsetY)
+    {
+        markRectAsDirty(paletteAt(m_px, m_py));
+        if (!(m_px + offsetX < 0 || m_px + offsetX >= k_paletteNumberOfCells)) {
+            m_px += offsetX;
+        }
+        if (!(m_py + offsetY < 0 || m_py + offsetY >= k_paletteNumberOfCells)) {
+            m_py += offsetY;
+        }
+        markRectAsDirty(paletteAt(m_px, m_py));
     }
 
     KDRect CanvaView::cellAt(int x, int y) const

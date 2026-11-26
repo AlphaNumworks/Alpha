@@ -25,6 +25,15 @@ namespace Sprites
             void save(void);
 
         private:
+            void moveCursor(int x, int y)
+            {
+                if (m_inPalette) {
+                    m_view.movePaletteByOffset(x, y);
+                } else {
+                    m_view.moveCursorByOffset(x, y);
+                }
+            }
+
             CanvaView m_view;
             Sprite    m_sprite;
 
