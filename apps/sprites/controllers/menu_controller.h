@@ -1,15 +1,19 @@
 #ifndef SPRITES_MENU_CONTROLLER_H
     #define SPRITES_MENU_CONTROLLER_H
 
+#include "apps/sprites/controllers/cells/sprite_name_cell.h"
 #include "apps/sprites/store/sprite_store.hpp"
 #include "escher/app.h"
 #include "escher/button_row_controller.h"
+#include "escher/even_odd_cell_with_ellipsis.h"
+#include "escher/even_odd_message_text_cell.h"
 #include "escher/selectable_table_view.h"
 #include "escher/selectable_table_view_data_source.h"
 #include "escher/stack_view_controller.h"
 #include "escher/table_view_data_source.h"
 #include "escher/text_field_delegate.h"
 #include "escher/view_controller.h"
+#include "cells/sprite_name_cell.h"
 namespace Sprites
 {
 
@@ -80,7 +84,15 @@ namespace Sprites
             void addSprite();
             void editSpriteAtIndex(size_t idx);
 
-            SpriteStore * m_spriteStore;
+            SpriteStore *       m_spriteStore;
+
+            /* Cells */
+            SpriteNameCell          m_spriteCells[k_maxNumberOfDisplayableSpriteCells];
+            EvenOddCellWithEllipsis m_spriteParameterCells[k_maxNumberOfDisplayableSpriteCells];
+            EvenOddMessageTextCell  m_addNewSpriteCell;
+            EvenOddCell             m_emptyCell;
+
+            /* Rand asf */
             SelectableTableView m_selectableTableView;
     };
 

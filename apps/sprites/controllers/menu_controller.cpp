@@ -1,9 +1,10 @@
 #include "apps/sprites/controllers/menu_controller.h"
 #include "escher/button_row_controller.h"
 #include "escher/container.h"
+#include "escher/metric.h"
 #include "escher/responder.h"
 #include "escher/text_field.h"
-#include <cstddef>
+#include <apps/i18n.h>
 
 namespace Sprites
 {
@@ -21,6 +22,12 @@ namespace Sprites
     {
         m_selectableTableView.setMargins(0);
         m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::Arrows);
+        // FIXME: Change for add sprite
+        m_addNewSpriteCell.setMessage(I18n::Message::AddScript);
+        for (size_t i = 0; i < k_maxNumberOfDisplayableSpriteCells; ++i) {
+            m_spriteCells[i].setParentResponder(&m_selectableTableView);
+            m_spriteCells[i].textField()->setDelegates(nullptr, this);
+        }
     }
 
     StackViewController * MenuController::stackViewController(void)
@@ -62,7 +69,7 @@ namespace Sprites
     int MenuController::numberOfRows(void) const
     {
         // TODO: Return actual number of rows
-        return 0;
+        return m_spriteStore->NumberOfSprites() + 1;  // Add sprite
     }
 
     void MenuController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j)
@@ -73,50 +80,111 @@ namespace Sprites
 
     KDCoordinate MenuController::columnWidth(int i)
     {
-        // TODO: Do smth
-        return 0;
+        switch (i) {
+            case 0:
+                return m_selectableTableView.bounds().width() - k_parametersColumbWidth;
+            case 1:
+                return k_parametersColumbWidth;
+            default:
+                assert(false);
+                return 0;
+        }
     }
 
     KDCoordinate MenuController::cumulatedWidthFromIndex(int i)
     {
-        // TODO: Do smth
-        return 0;
+        switch (i) {
+            case 0:
+                return 0;
+            case 1:
+                return m_selectableTableView.bounds().width() - k_parametersColumbWidth;
+            case 2:
+                return m_selectableTableView.bounds().width();
+            default:
+                assert(false);
+                return 0;
+        }
     }
 
     KDCoordinate MenuController::cumulatedHeightFromIndex(int j)
     {
-        // TODO: Do smth
-        return 0;
+        return Metric::StoreRowHeight * j;
     }
 
     int MenuController::indexFromCumulatedWidth(KDCoordinate offsetX)
     {
-        // TODO: Do smth
+        if (offsetX <= m_selectableTableView.bounds().width() - k_parametersColumbWidth) {
+            return 0;
+        }
+        if (offsetX <= m_selectableTableView.bounds().width()) {
+            return 1;
+        }
+        else {
+            return 2;
+        }
+        assert(false);
         return 0;
     }
 
     int MenuController::indexFromCumulatedHeight(KDCoordinate offsetY)
     {
-        // TODO: Do smth
-        return 0;
+        if (Metric::StoreRowHeight == 0) {
+            return 0;
+        }
+        return (offsetY - 1) / Metric::StoreRowHeight;
     }
 
     HighlightCell * MenuController::reusableCell(int index, int type)
     {
-        // TODO: Do smth
+        assert(index >= 0);
+        if (type == SpriteCellType) {
+            assert(index >=0 && index < k_maxNumberOfDisplayableSpriteCells);
+            return &m_spriteCells[index];
+        }
+        if (type == SpriteParameterCellType) {
+            assert(index >=0 && index < k_maxNumberOfDisplayableSpriteCells);
+            return &m_spriteParameterCells[index];
+        }
+        if (type == AddSpriteCellType) {
+            assert(index == 0);
+            return &m_addNewSpriteCell;
+        }
+        if(type == EmptyCellType) {
+            return &m_emptyCell;
+        }
+        assert(false);
         return nullptr;
     }
 
     int MenuController::reusableCellCount(int type)
     {
-        // TODO: Do smth
+        switch (type) {
+            case EmptyCellType:
+            case AddSpriteCellType:
+                return 1;
+            case SpriteCellType:
+            case SpriteParameterCellType:
+                return k_maxNumberOfDisplayableSpriteCells;
+        }
+        assert(false);
         return 0;
     }
 
     int MenuController::typeAtLocation(int i, int j)
     {
-        // TODO: Do smth
-        return 0;
+        assert(i >= 0 && i < numberOfColumns());
+        assert(j >= 0 && j < numberOfRows());
+        if (i == 0) {
+            if (j == numberOfRows()-1) {// && m_shouldDisplayAddScriptRow) {
+                return AddSpriteCellType;
+            }
+            return SpriteCellType;
+        }
+        assert(i == 1);
+        if (j == numberOfRows()-1) {// && m_shouldDisplayAddScriptRow) {
+            return EmptyCellType;
+        }
+        return SpriteParameterCellType;
     }
 
     /* SelectableTableViewDelegate */

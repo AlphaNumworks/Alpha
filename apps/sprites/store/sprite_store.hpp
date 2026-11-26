@@ -28,7 +28,7 @@ namespace Sprites
                 return Ion::Storage::sharedStorage()->numberOfRecordsWithExtension(k_spriteExtension);
             }
 
-            static void DeleteAllSprites() {
+            void DeleteAllSprites() {
                 for (size_t i = NumberOfSprites(); i > 0; --i) {
                     Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(k_spriteExtension, i).destroy();
                 }
