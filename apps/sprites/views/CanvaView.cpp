@@ -49,24 +49,24 @@ namespace Sprites
     void CanvaView::moveCursorByOffset(int offsetX, int offsetY)
     {
         markRectAsDirty(cellAt(m_x, m_y));
-        if (!(m_x + offsetX < 0 || m_x + offsetX >= k_pixelSize)) {
-            m_x += offsetX;
-        }
-        if (!(m_y + offsetY < 0 || m_y + offsetY >= k_pixelSize)) {
-            m_y += offsetY;
-        }
+        m_x += offsetX;
+        m_y += offsetY;
+        if (m_x < 0) m_x = k_pixelSize - 1;
+        else if (m_x >= k_pixelSize) m_x = 0;
+        if (m_y < 0) m_y = k_pixelSize - 1;
+        else if (m_y >= k_pixelSize) m_y = 0;
         markRectAsDirty(cellAt(m_x, m_y));
     }
 
     void CanvaView::movePaletteByOffset(int offsetX, int offsetY)
     {
         markRectAsDirty(paletteAt(m_px, m_py));
-        if (!(m_px + offsetX < 0 || m_px + offsetX >= k_paletteNumberOfCells)) {
-            m_px += offsetX;
-        }
-        if (!(m_py + offsetY < 0 || m_py + offsetY >= k_paletteNumberOfCells)) {
-            m_py += offsetY;
-        }
+        m_px += offsetX;
+        m_py += offsetY;
+        if (m_px < 0) m_px = k_paletteNumberOfCells - 1;
+        else if (m_px >= k_paletteNumberOfCells) m_px = 0;
+        if (m_py < 0) m_py = k_paletteNumberOfCells - 1;
+        else if (m_py >= k_paletteNumberOfCells) m_py = 0;
         markRectAsDirty(paletteAt(m_px, m_py));
     }
 
