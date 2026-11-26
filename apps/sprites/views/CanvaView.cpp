@@ -43,7 +43,7 @@ namespace Sprites
 
         auto rp = paletteAt(m_px, m_py);
         ctx->strokeRect(rp, KDColorBlack);
-        ctx->strokeRect(KDRect(rp.left() + 1, rp.top() + 1, r.width() - 2, r.height() - 2), KDColorWhite);
+        ctx->strokeRect(KDRect(rp.left() + 1, rp.top() + 1, rp.width() - 2, rp.height() - 2), KDColorWhite);
     }
 
     void CanvaView::moveCursorByOffset(int offsetX, int offsetY)
