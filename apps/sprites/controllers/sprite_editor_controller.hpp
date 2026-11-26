@@ -28,7 +28,7 @@ namespace Sprites
             CanvaView m_view;
             Sprite    m_sprite;
 
-            uint8_t   m_actualColor{0};
+            uint8_t   m_actualColor{0b00000011};
 
             uint8_t   m_buff[k_colorBufferSize];
 
