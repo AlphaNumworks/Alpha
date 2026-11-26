@@ -20,6 +20,13 @@ namespace Sprites
 
             KDRect cellAt(int x, int y) const;
 
+            int cursorX(void) { return m_x; }
+            int cursorY(void) { return m_y; }
+
+            void reloadOnCursor(void) {
+                markRectAsDirty(cellAt(m_x, m_y));
+            }
+
         private:
             // NOTE: Given by controlleeer
             const uint8_t * m_buff;

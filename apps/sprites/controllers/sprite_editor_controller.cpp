@@ -27,6 +27,11 @@ namespace Sprites
 
     bool SpriteEditorController::handleEvent(Ion::Events::Event evt)
     {
+        if (evt == Ion::Events::OK || evt == Ion::Events::EXE) {
+            m_buff[m_view.cursorY() * CanvaView::k_pixelSize + m_view.cursorX()] = m_actualColor;
+            m_view.reloadOnCursor();
+            return true;
+        }
         if (evt == Ion::Events::Down) {
             m_view.moveCursorByOffset(0, 1);
             return true;
