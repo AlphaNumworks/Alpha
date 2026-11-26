@@ -28,6 +28,8 @@ namespace Sprites
                 33, 49, 50, 54,  0, 21, 42, 63,
             };
 
+            static constexpr uint8_t k_alphaColor = 0xFC;
+
             static KDColor toKDColor(uint8_t p)
             {
                 return KDColor::RGB888((p >> 6) * 85, ((p >> 4) & 3) * 85, ((p >> 2) & 3) * 85);
@@ -43,6 +45,7 @@ namespace Sprites
 
             int cursorX(void) const { return m_x; }
             int cursorY(void) const { return m_y; }
+
             void reloadOnCursor(void) {
                 markRectAsDirty(cellAt(m_x, m_y));
             }

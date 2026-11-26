@@ -41,8 +41,17 @@ namespace Sprites
                 m_view.reloadOnCursor();
             } else {
                 m_actualColor = m_view.color();
+                m_inPalette = !m_inPalette;
             }
             return true;
+        }
+        if (evt == Ion::Events::Backspace) {
+            if (!m_inPalette) {
+                m_buff[m_view.cursorY() * CanvaView::k_pixelSize + m_view.cursorX()] = CanvaView::k_alphaColor;
+                m_view.reloadOnCursor();
+                return true;
+            }
+            return false;
         }
         if (evt == Ion::Events::Down) {
             this->moveCursor(0, 1);
