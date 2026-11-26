@@ -38,7 +38,7 @@ namespace Sprites
 
     void MenuController::willExitResponderChain(Responder * nfr)
     {
-        Container::activeApp()->setFirstResponder(&m_selectableTableView);
+        //P Pass
     }
 
     /* ViewController */
@@ -49,14 +49,22 @@ namespace Sprites
 
     bool MenuController::handleEvent(Ion::Events::Event evt)
     {
-        // TODO: Handle event
+        if (evt == Ion::Events::OK || evt == Ion::Events::EXE) {
+            int selectedRow = m_selectableTableView.selectedRow();
+            int selectedColumn = m_selectableTableView.selectedColumn();
+            if (selectedRow >= 0 && selectedRow < m_spriteStore->NumberOfSprites()) {
+                if (selectedColumn == 1) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
     void MenuController::didBecomeFirstResponder(void)
     {
         // TODO: Do smth
-        return;
+        Container::activeApp()->setFirstResponder(&m_selectableTableView);
     }
 
     void MenuController::viewWillAppear(void)
@@ -74,8 +82,10 @@ namespace Sprites
 
     void MenuController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j)
     {
-        // TODO: Do smtkj
-        return;
+        if (i == 0 && j < m_spriteStore->NumberOfSprites()) {
+            assert(j >= 0 && j < m_spriteStore->NumberOfSprites());
+            (static_cast<SpriteNameCell *>(cell))->textField()->setText(m_spriteStore->spriteAtIdx(j).fullName());
+        }
     }
 
     KDCoordinate MenuController::columnWidth(int i)
@@ -196,7 +206,9 @@ namespace Sprites
         bool withinTemporarySelection
     )
     {
-        // TODO: Do smth
+        if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1) {//&& m_shouldDisplayAddScriptRow) {
+            t->selectCellAtLocation(0, numberOfRows()-1);
+        }
     }
 
     /* TextFieldDelegate */

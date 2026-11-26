@@ -16,6 +16,11 @@ namespace Sprites
 
             SpriteStore();
 
+            static Sprite spriteAtIdx(int idx)
+            {
+                return Sprite(Ion::Storage::sharedStorage()->recordWithExtensionAtIndex(k_spriteExtension, idx));
+            }
+
             static Sprite SpriteNamed(const char * baseName) {
                 return Sprite(Ion::Storage::sharedStorage()->recordBaseNamedWithExtension(baseName, k_spriteExtension));
             }
@@ -24,7 +29,7 @@ namespace Sprites
                 return SpriteNamed(baseName).isNull();
             }
 
-            static size_t NumberOfSprites(void) {
+            static int NumberOfSprites(void) {
                 return Ion::Storage::sharedStorage()->numberOfRecordsWithExtension(k_spriteExtension);
             }
 
