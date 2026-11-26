@@ -36,6 +36,13 @@ namespace Sprites
             }
         }
 
+        // TODO: Get some I18n messages for hints ... or mb no hints
+        // static constexpr const char * help[4] = {"OK: peindre", "TOOLBOX: palette", "SUPPR: effacer", "BACK: quitter"};
+        // for (int i = 0; i < 4; i++) {
+        //     ctx->drawString(help[i], KDPoint(k_paletteOffsetX, 130 + i * 16),
+        //                     KDFont::SmallFont, Palette::GrayDark, Palette::GrayBright);
+        // }
+
         // NOTE: To only draw bodrders
         auto r = cellAt(m_x, m_y);
         ctx->strokeRect(r, KDColorBlack);
