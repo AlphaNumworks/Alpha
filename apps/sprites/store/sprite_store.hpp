@@ -1,9 +1,7 @@
 #ifndef SPRITE_SCRIPT_STORE_H
     #define SPRITE_SCRIPT_STORE_H
     #include "apps/sprites/sprite/sprite.h"
-#include <cassert>
-    #include <cstddef>
-#include <cstring>
+    #include "liba/include/string.h"
 
 namespace Sprites
 {

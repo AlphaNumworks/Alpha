@@ -1,7 +1,6 @@
 #ifndef SPRITES_CANVA_VIEW_H
     #define SPRITES_CANVA_VIEW_H
     #include "escher/view.h"
-    #include <cstdint>
 
 namespace Sprites
 {
