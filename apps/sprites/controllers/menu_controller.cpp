@@ -35,7 +35,7 @@ namespace Sprites
     StackViewController * MenuController::stackViewController(void)
     {
         // TODO: Return actual stackview controller
-        return static_cast<StackViewController *>(parentResponder()->parentResponder());
+        return static_cast<StackViewController *>(parentResponder());
     }
 
     void MenuController::willExitResponderChain(Responder * nfr)
