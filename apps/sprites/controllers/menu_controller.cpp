@@ -64,6 +64,10 @@ namespace Sprites
     void MenuController::didBecomeFirstResponder(void)
     {
         // TODO: Do smth
+        if (m_selectableTableView.selectedRow() < 0) {
+            m_selectableTableView.selectCellAtLocation(0, 0);
+        }
+        assert(m_selectableTableView.selectedRow() < m_spriteStore->NumberOfSprites() + 1);
         Container::activeApp()->setFirstResponder(&m_selectableTableView);
     }
 
