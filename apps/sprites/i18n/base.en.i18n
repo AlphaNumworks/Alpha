@@ -1,1 +1,6 @@
-AddSprite = "Add a sprite"
+AddSprite       = "Add a sprite"
+DeleteSprite    = "Delete sprite"
+DuplicateSprite = "Duplicate sprite"
+SpriteOptions   = "Sprite options"
+SpriteSize      = "Sprite size"
+RenameSprite    = "Rename sprite"

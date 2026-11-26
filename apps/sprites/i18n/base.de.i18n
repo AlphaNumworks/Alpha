@@ -1,1 +1,6 @@
 AddSprite = "Einen Sprite hinzufügen"
+DeleteSprite = "Sprite löschen"
+DuplicateSprite = "Sprite duplizieren"
+SpriteOptions = "Sprite-Optionen"
+SpriteSize = "Sprite-Größe"
+RenameSprite = "Sprite umbenennen"

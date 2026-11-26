@@ -1,1 +1,6 @@
 AddSprite = "Een sprite toevoegen"
+DeleteSprite = "Sprite verwijderen"
+DuplicateSprite = "Sprite dupliceren"
+SpriteOptions = "Sprite-opties"
+SpriteSize = "Grootte van sprite"
+RenameSprite = "Sprite hernoemen"

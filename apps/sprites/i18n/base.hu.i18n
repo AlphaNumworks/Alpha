@@ -1,1 +1,6 @@
 AddSprite = "Sprite hozzáadása"
+DeleteSprite = "Sprite törlése"
+DuplicateSprite = "Sprite duplikálása"
+SpriteOptions = "Sprite-beállítások"
+SpriteSize = "Sprite-méret"
+RenameSprite = "Sprite átnevezése"

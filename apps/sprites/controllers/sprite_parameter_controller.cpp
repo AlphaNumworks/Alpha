@@ -13,9 +13,9 @@ namespace Sprites {
         ViewController(parentResponder),
         m_pageTitle(title),
         m_renameSprite(I18n::Message::Rename),
-        m_deleteSprite(I18n::Message::DeleteScript),
-        m_duplicateSprite(I18n::Message::DuplicateScript),
-        m_size(I18n::Message::ScriptSize),
+        m_deleteSprite(I18n::Message::DeleteSprite),
+        m_duplicateSprite(I18n::Message::DuplicateSprite),
+        m_size(I18n::Message::SpriteSize),
         m_selectableTableView(this),
         m_Sprite(Ion::Storage::Record()),
         m_menuController(menuController)
