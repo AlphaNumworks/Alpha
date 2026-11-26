@@ -36,6 +36,9 @@ namespace Sprites
             // NOTE: 1 = '\0'
             static constexpr int k_defaultSpriteNameMaxSize = 6 + k_defaultSpriteNameNumberMaxSize + 1;
 
+            static bool DefaultName(char buffer[], size_t bufferSize);
+            static bool nameCompliant(const char * name);
+
             Sprite(Ion::Storage::Record r = Ion::Storage::Record());
 
             const char* content(void) const;

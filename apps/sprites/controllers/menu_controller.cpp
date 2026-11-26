@@ -59,6 +59,9 @@ namespace Sprites
                     this->configureSprite();
                     return true;
                 }
+            } else if (selectedColumn == 0 && selectedRow == m_spriteStore->NumberOfSprites()) {
+                addSprite();
+                return true;
             }
         }
         return false;
@@ -269,7 +272,12 @@ namespace Sprites
 
     void MenuController::addSprite(void)
     {
-        // TODO: Do smth
+        Sprite::ErrorStatus err = m_spriteStore->AddNewSprite();
+        if (err == Sprite::ErrorStatus::None) {
+            // FAAAAAAH
+            return;
+        }
+        assert(false);
     }
 
     void MenuController::editSpriteAtIndex(size_t idx)

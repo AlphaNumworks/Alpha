@@ -1,6 +1,7 @@
 #ifndef SPRITE_SCRIPT_STORE_H
     #define SPRITE_SCRIPT_STORE_H
     #include "apps/sprites/sprite/sprite.h"
+#include <cassert>
     #include <cstddef>
 #include <cstring>
 
@@ -39,16 +40,20 @@ namespace Sprites
                 }
             }
 
-            static void AddSprite(const char * name)
+            static Ion::Storage::Record::ErrorStatus AddSprite(const char * name)
             {
-                size_t size = (strlen(name) + 1 + k_spriteExtensionLength) + sizeof(uint16_t) + (sizeof(uint8_t) * 256);
-
-                if (size >= Ion::Storage::sharedStorage()->availableSize()) {
-                    return;
-                }
-                // FIXME: Is there a proper method to do thisss
                 uint8_t f[256] = {};
-                Ion::Storage::sharedStorage()->createRecordWithExtension(name, k_spriteExtension, f, 256, true);
+                if (!Sprite::nameCompliant(name)) {
+                    return Ion::Storage::Record::ErrorStatus::NonCompliantName;
+                }
+                return Ion::Storage::sharedStorage()->createRecordWithExtension(name, k_spriteExtension, f, 256, true);
+            }
+
+            static Ion::Storage::Record::ErrorStatus AddNewSprite()
+            {
+                uint8_t f[256] = {};
+                memset(f, (uint8_t)(0xFF), 256);
+                return Ion::Storage::sharedStorage()->createRecordWithFullName(".spr", f, 256, true);
             }
 
     };
