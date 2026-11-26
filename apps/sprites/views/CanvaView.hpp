@@ -17,6 +17,17 @@ namespace Sprites
             static constexpr int k_paletteOffsetX       = 200;
             static constexpr int k_paletteCellSize      = 14;
 
+            static constexpr uint8_t k_paletteOrder[64] = {
+                16, 32, 48, 36, 37, 52, 53, 58,
+                20, 40, 41, 56, 57, 60, 61, 62,
+                4,  8, 24, 25, 12, 28, 44, 45,
+                5,  9, 10, 13, 14, 29, 30, 46,
+                6,  7, 11, 26, 27, 15, 31, 47,
+                1,  2,  3, 18, 19, 22, 23, 43,
+                17, 34, 35, 51, 38, 39, 55, 59,
+                33, 49, 50, 54,  0, 21, 42, 63,
+            };
+
             static KDColor toKDColor(uint8_t p)
             {
                 return KDColor::RGB888((p >> 6) * 85, ((p >> 4) & 3) * 85, ((p >> 2) & 3) * 85);
@@ -44,17 +55,9 @@ namespace Sprites
             int paletteY(void) const { return m_py; }
             // void reloadOnPalette(void);
 
+            uint8_t color() const { return (k_paletteOrder[m_py * k_paletteNumberOfCells + m_px] << 2) | 3; };
+
         private:
-            static constexpr uint8_t k_paletteOrder[64] = {
-                16, 32, 48, 36, 37, 52, 53, 58,
-                20, 40, 41, 56, 57, 60, 61, 62,
-                4,  8, 24, 25, 12, 28, 44, 45,
-                5,  9, 10, 13, 14, 29, 30, 46,
-                6,  7, 11, 26, 27, 15, 31, 47,
-                1,  2,  3, 18, 19, 22, 23, 43,
-                17, 34, 35, 51, 38, 39, 55, 59,
-                33, 49, 50, 54,  0, 21, 42, 63,
-            };
 
             // NOTE: Given by controlleeer
             const uint8_t * m_buff;
