@@ -23,7 +23,7 @@ namespace Sprites
         m_selectableTableView.setMargins(0);
         m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::Arrows);
         // FIXME: Change for add sprite
-        m_addNewSpriteCell.setMessage(I18n::Message::AddScript);
+        m_addNewSpriteCell.setMessage(I18n::Message::AddSprite);
         for (size_t i = 0; i < k_maxNumberOfDisplayableSpriteCells; ++i) {
             m_spriteCells[i].setParentResponder(&m_selectableTableView);
             m_spriteCells[i].textField()->setDelegates(nullptr, this);
