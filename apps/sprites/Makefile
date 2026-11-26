@@ -10,9 +10,12 @@ app_sprites_src = $(addprefix apps/sprites/,\
 	\
 	controllers/menu_controller.cpp \
 	controllers/sprite_parameter_controller.cpp \
+	controllers/sprite_editor_controller.cpp \
 	controllers/cells/sprite_name_cell.cpp \
 	\
 	store/sprite_store.cpp \
+	\
+	views/CanvaView.cpp \
 )
 
 # app_code_test_src = $(addprefix apps/code/,\
