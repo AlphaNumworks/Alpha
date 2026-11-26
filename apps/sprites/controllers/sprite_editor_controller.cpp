@@ -54,6 +54,10 @@ namespace Sprites
             m_view.moveCursorByOffset(1, 0);
             return true;
         }
+        if (evt == Ion::Events::Toolbox) {
+            m_inPalette = !m_inPalette;
+            return true;
+        }
         return false;
     }
 

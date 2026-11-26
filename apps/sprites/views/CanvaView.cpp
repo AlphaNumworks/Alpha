@@ -6,6 +6,8 @@
 namespace Sprites
 {
 
+    constexpr uint8_t CanvaView::k_paletteOrder[64];
+
     CanvaView::CanvaView(const uint8_t * pxs) : m_buff(pxs)
     {
         // Aha
@@ -24,8 +26,13 @@ namespace Sprites
                     ctx->fillRect(KDRect(r.x(), r.y(), h, h), Palette::GrayBright);
                     ctx->fillRect(KDRect(r.x() + h, r.y() + h, h, h), Palette::GrayBright);
                 } else {
-                    ctx->fillRect(r, KDColor::RGB888((cuint >> 6) * 85, ((cuint >> 4) & 3) * 85, ((cuint >> 2) & 3) * 85));
+                    ctx->fillRect(r, toKDColor(cuint));
                 }
+            }
+        }
+        for (size_t y = 0; y < k_paletteNumberOfCells; ++y) {
+            for (size_t x = 0; x < k_paletteNumberOfCells; ++x) {
+                ctx->fillRect(paletteAt(x, y), toKDColor((k_paletteOrder[y * k_paletteNumberOfCells + x] << 2) | 3));
             }
         }
 
@@ -50,6 +57,11 @@ namespace Sprites
     KDRect CanvaView::cellAt(int x, int y) const
     {
         return KDRect(x * k_cellSize, y * k_cellSize, k_cellSize, k_cellSize);
+    }
+
+    KDRect CanvaView::paletteAt(int x, int y) const
+    {
+        return KDRect(k_paletteOffsetX + (x * k_paletteCellSize), y * k_paletteCellSize, k_paletteCellSize, k_paletteCellSize);
     }
 
 }
