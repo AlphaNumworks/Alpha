@@ -6,7 +6,8 @@ namespace Sprites
 
     SpriteEditorController::SpriteEditorController(
         // None
-    ) : ViewController(nullptr)
+    ) : ViewController(nullptr),
+        m_view(m_buff)
     {
         // Init goes brr
     }
