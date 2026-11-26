@@ -381,6 +381,25 @@ namespace Sprites
         return false;
     }
 
+    void MenuController::deleteSprite(Sprite sprite)
+    {
+        assert(!sprite.isNull());
+        sprite.destroy();
+        updateAddSpriteRowDisplay();
+    }
+
+    void MenuController::duplicateSprite(Sprite sprite)
+    {
+        assert(!sprite.isNull());
+
+        char buffer[10];
+        Sprite::DefaultName(buffer, 10);
+
+        Ion::Storage::sharedStorage()->createRecordWithExtension(buffer, SpriteStore::k_spriteExtension, sprite.value().buffer, sprite.value().size);
+
+        updateAddSpriteRowDisplay();
+    }
+
     bool MenuController::privateTextFieldDidAbortEditing(
         TextField * textField,
         bool menuControllerStaysInResponderChain
@@ -396,7 +415,7 @@ namespace Sprites
             bool foundDefaultName = Sprite::DefaultName(numberedDefaultName, Sprite::k_defaultSpriteNameMaxSize);
             if (!foundDefaultName) {
                 // If we did not find a default name, delete the script
-                // TODO: deleteSprite(script);
+                deleteSprite(script);
                 return true;
             }
             Sprite::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, SpriteStore::k_spriteExtension);

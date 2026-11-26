@@ -42,11 +42,11 @@ namespace Sprites {
     bool SpriteParameterController::handleEvent(Ion::Events::Event event)
     {
         if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-            // Sprite s = m_Sprite;
+            Sprite s = m_Sprite;
             switch (this->selectedRow()) {
             case 0:
                 dismissSpriteParameterController();
-                // m_menuController->renameSelectedSprite();
+                m_menuController->renameSelectedSprite();
                 return true;
             case 1:{
                 MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
@@ -56,11 +56,11 @@ namespace Sprites {
             }
             case 2:
                 dismissSpriteParameterController();
-                // m_menuController->duplicateSprite(s);
+                m_menuController->duplicateSprite(s);
                 return true;
             case 3:
                 dismissSpriteParameterController();
-                // m_menuController->deleteSprite(s);
+                m_menuController->deleteSprite(s);
                 return true;
             default:
                 assert(false);

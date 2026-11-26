@@ -74,6 +74,10 @@ namespace Sprites
             // int numberOfButtons(ButtonRowController::Position position) const override { return 1; };
             // Button * buttonAtIndex(int index, ButtonRowController::Position position) const override;
 
+            void deleteSprite(Sprite sprite);
+            void renameSelectedSprite(void);
+            void duplicateSprite(Sprite sprite);
+
         private:
             static constexpr int k_maxNumberOfDisplayableSpriteCells = 5;
             static constexpr int k_parametersColumbWidth = Metric::EllipsisCellWidth;
@@ -86,7 +90,6 @@ namespace Sprites
             void editSpriteAtIndex(size_t idx);
 
             void updateAddSpriteRowDisplay(void);
-            void renameSelectedSprite(void);
             bool privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain);
 
             SpriteStore *       m_spriteStore;
