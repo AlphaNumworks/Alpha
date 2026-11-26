@@ -56,6 +56,14 @@ namespace Sprites
                 return Ion::Storage::sharedStorage()->createRecordWithFullName(".spr", f, 256, true);
             }
 
+            bool isFull(void)
+            {
+                return Ion::Storage::sharedStorage()->availableSize() < k_fullFreeSpaceSizeLimit;
+            }
+
+        private:
+            static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::record_size_t)+Sprite::k_defaultSpriteNameMaxSize+k_spriteExtensionLength+256;
+
     };
 
 }

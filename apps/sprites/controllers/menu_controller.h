@@ -85,6 +85,10 @@ namespace Sprites
             void addSprite();
             void editSpriteAtIndex(size_t idx);
 
+            void updateAddSpriteRowDisplay(void);
+            void renameSelectedSprite(void);
+            bool privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain);
+
             SpriteStore *       m_spriteStore;
 
             /* Cells */
@@ -100,6 +104,8 @@ namespace Sprites
             SpriteParameterController m_paramController;
             void configureSprite();
             // SpriteEditorController    m_editorController;
+
+            bool m_shouldDisplayAddSpriteRow = true;
 
     };
 

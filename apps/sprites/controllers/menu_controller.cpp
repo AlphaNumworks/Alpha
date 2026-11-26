@@ -1,4 +1,7 @@
 #include "apps/sprites/controllers/menu_controller.h"
+#include "apps/apps_container.h"
+#include "apps/code/script_name_cell.h"
+#include "apps/sprites/controllers/cells/sprite_name_cell.h"
 #include "escher/button_row_controller.h"
 #include "escher/container.h"
 #include "escher/i18n.h"
@@ -40,7 +43,15 @@ namespace Sprites
 
     void MenuController::willExitResponderChain(Responder * nfr)
     {
-        //P Pass
+        int selectedRow = m_selectableTableView.selectedRow();
+        int selectedColumn = m_selectableTableView.selectedColumn();
+        if (selectedRow >= 0 && selectedRow < m_spriteStore->NumberOfSprites() && selectedColumn == 0) {
+            TextField * tf = static_cast<SpriteNameCell *>(m_selectableTableView.selectedCell())->textField();
+            if (tf->isEditing()) {
+                tf->setEditing(false);
+                privateTextFieldDidAbortEditing(tf, false);
+            }
+        }
     }
 
     /* ViewController */
@@ -59,6 +70,8 @@ namespace Sprites
                     this->configureSprite();
                     return true;
                 }
+                assert(selectedColumn == 0);
+                return true;
             } else if (selectedColumn == 0 && selectedRow == m_spriteStore->NumberOfSprites()) {
                 addSprite();
                 return true;
@@ -80,6 +93,7 @@ namespace Sprites
     void MenuController::viewWillAppear(void)
     {
         ViewController::viewWillAppear();
+        updateAddSpriteRowDisplay();
     }
 
     /* Table view datasource */
@@ -195,13 +209,13 @@ namespace Sprites
         assert(i >= 0 && i < numberOfColumns());
         assert(j >= 0 && j < numberOfRows());
         if (i == 0) {
-            if (j == numberOfRows()-1) {// && m_shouldDisplayAddScriptRow) {
+            if (j == numberOfRows()-1 && m_shouldDisplayAddSpriteRow) {
                 return AddSpriteCellType;
             }
             return SpriteCellType;
         }
         assert(i == 1);
-        if (j == numberOfRows()-1) {// && m_shouldDisplayAddScriptRow) {
+        if (j == numberOfRows()-1 && m_shouldDisplayAddSpriteRow) {
             return EmptyCellType;
         }
         return SpriteParameterCellType;
@@ -216,7 +230,7 @@ namespace Sprites
         bool withinTemporarySelection
     )
     {
-        if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1) {//&& m_shouldDisplayAddScriptRow) {
+        if (selectedRow() == numberOfRows() - 1 && selectedColumn() == 1 && m_shouldDisplayAddSpriteRow) {
             t->selectCellAtLocation(0, numberOfRows()-1);
         }
     }
@@ -225,21 +239,10 @@ namespace Sprites
 
     bool MenuController::textFieldShouldFinishEditing(
         TextField * field,
-        Ion::Events::Event evt
+        Ion::Events::Event event
     )
     {
-        // TODO: Do smth
-        return false;
-    }
-
-    bool MenuController::textFieldDidFinishEditing(
-        TextField * field,
-        const char * text,
-        Ion::Events::Event evt
-    )
-    {
-        // TODO: Do smth
-        return false;
+        return event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Down || event == Ion::Events::Up;
     }
 
     bool MenuController::textFieldDidAbortEditing(TextField * field)
@@ -253,8 +256,14 @@ namespace Sprites
         bool textSizeDidChange
     )
     {
-        // TODO: Do smth
-        return false;
+        int scriptExtensionLength = 1 + strlen(SpriteStore::k_spriteExtension);
+        if (field->isEditing()) {
+            const char * maxPointerLocation = field->text() + field->draftTextLength() - scriptExtensionLength;
+            if (field->cursorLocation() > maxPointerLocation) {
+                field->setCursorLocation(maxPointerLocation);
+            }
+        }
+        return returnValue;
     }
 
     /* ButtonRowDelegate */
@@ -274,7 +283,8 @@ namespace Sprites
     {
         Sprite::ErrorStatus err = m_spriteStore->AddNewSprite();
         if (err == Sprite::ErrorStatus::None) {
-            // FAAAAAAH
+            updateAddSpriteRowDisplay();
+            renameSelectedSprite();
             return;
         }
         assert(false);
@@ -291,6 +301,120 @@ namespace Sprites
         assert(m_selectableTableView.selectedRow() < m_spriteStore->NumberOfSprites());
         m_paramController.setSprite(m_spriteStore->spriteAtIdx(m_selectableTableView.selectedRow()));
         stackViewController()->push(&m_paramController);
+    }
+
+    void MenuController::updateAddSpriteRowDisplay(void)
+    {
+        m_shouldDisplayAddSpriteRow = !m_spriteStore->isFull();
+        m_selectableTableView.reloadData();
+    }
+
+    void MenuController::renameSelectedSprite(void)
+    {
+        assert(m_selectableTableView.selectedRow() >= 0);
+        assert(m_selectableTableView.selectedRow() < m_spriteStore->NumberOfSprites());
+        AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::AlphaLock);
+        m_selectableTableView.selectCellAtLocation(0, (m_selectableTableView.selectedRow()));
+        SpriteNameCell * myCell = static_cast<SpriteNameCell *>(m_selectableTableView.selectedCell());
+        Container::activeApp()->setFirstResponder(myCell);
+        myCell->setHighlighted(false);
+        TextField * tf = myCell->textField();
+        const char * previousText = tf->text();
+        tf->setEditing(true);
+        tf->setText(previousText);
+        tf->setCursorLocation(tf->text() + strlen(previousText));
+    }
+
+    bool MenuController::textFieldDidFinishEditing(
+        TextField * textField,
+        const char * text,
+        Ion::Events::Event event
+    ) {
+        const char * newName;
+        static constexpr int bufferSize = Sprite::k_defaultSpriteNameMaxSize + 1 + SpriteStore::k_spriteExtensionLength; //"script99" + "." + "py"
+        char numberedDefaultName[bufferSize];
+
+        if (strlen(text) > 1 + SpriteStore::k_spriteExtensionLength) {
+            newName = text;
+        } else {
+            // The user entered an empty name. Use a numbered default script name.
+            bool foundDefaultName = Sprite::DefaultName(numberedDefaultName, Sprite::k_defaultSpriteNameMaxSize);
+            int defaultNameLength = strlen(numberedDefaultName);
+            assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+            numberedDefaultName[defaultNameLength++] = '.';
+            assert(defaultNameLength < bufferSize);
+            strlcpy(numberedDefaultName + defaultNameLength, SpriteStore::k_spriteExtension, bufferSize - defaultNameLength);
+            /* If there are already scripts named script1.py, script2.py,... until
+            * Script::k_maxNumberOfDefaultScriptNames, we want to write the last tried
+            * default name and let the user modify it. */
+            if (!foundDefaultName) {
+            textField->setText(numberedDefaultName);
+            textField->setCursorLocation(textField->draftTextBuffer() + defaultNameLength);
+            }
+            newName = const_cast<const char *>(numberedDefaultName);
+        }
+        Sprite::ErrorStatus error = Sprite::nameCompliant(newName) ? m_spriteStore->spriteAtIdx(m_selectableTableView.selectedRow()).setName(newName) : Sprite::ErrorStatus::NonCompliantName;
+        if (error == Sprite::ErrorStatus::None) {
+            updateAddSpriteRowDisplay();
+            textField->setText(newName);
+            int currentRow = m_selectableTableView.selectedRow();
+            if (event == Ion::Events::Down && currentRow < numberOfRows() - 1) {
+                m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow + 1);
+            } else if (event == Ion::Events::Up && currentRow > 0) {
+                m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), currentRow - 1);
+            }
+            m_selectableTableView.selectedCell()->setHighlighted(true);
+            // reloadConsole();
+            Container::activeApp()->setFirstResponder(&m_selectableTableView);
+            AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+            return true;
+        } else if (error == Sprite::ErrorStatus::NameTaken) {
+            Container::activeApp()->displayWarning(I18n::Message::NameTaken);
+        } else if (error == Sprite::ErrorStatus::NonCompliantName) {
+            Container::activeApp()->displayWarning(I18n::Message::AllowedCharactersaz09, I18n::Message::NameCannotStartWithNumber);
+        } else {
+            assert(error == Sprite::ErrorStatus::NotEnoughSpaceAvailable);
+            Container::activeApp()->displayWarning(I18n::Message::NameTooLong);
+        }
+        return false;
+    }
+
+    bool MenuController::privateTextFieldDidAbortEditing(
+        TextField * textField,
+        bool menuControllerStaysInResponderChain
+    ) {
+        /* If menuControllerStaysInResponderChain is false, we do not want to use
+        * methods that might call setFirstResponder, because we might be in the
+        * middle of another setFirstResponder call. */
+        Sprite script = m_spriteStore->spriteAtIdx(m_selectableTableView.selectedRow());
+        const char * scriptName = script.fullName();
+        if (strlen(scriptName) <= 1 + strlen(SpriteStore::k_spriteExtension)) {
+            // The previous text was an empty name. Use a numbered default script name.
+            char numberedDefaultName[Sprite::k_defaultSpriteNameMaxSize];
+            bool foundDefaultName = Sprite::DefaultName(numberedDefaultName, Sprite::k_defaultSpriteNameMaxSize);
+            if (!foundDefaultName) {
+                // If we did not find a default name, delete the script
+                // TODO: deleteSprite(script);
+                return true;
+            }
+            Sprite::ErrorStatus error = script.setBaseNameWithExtension(numberedDefaultName, SpriteStore::k_spriteExtension);
+            scriptName = m_spriteStore->spriteAtIdx(m_selectableTableView.selectedRow()).fullName();
+            /* Because we use the numbered default name, the name should not be
+            * already taken. Plus, the script could be added only if the storage has
+            * enough available space to add a script named 'script99.py' */
+            (void) error; // Silence the "variable unused" warning if assertions are not enabled
+            assert(error == Sprite::ErrorStatus::None);
+            if (menuControllerStaysInResponderChain) {
+                updateAddSpriteRowDisplay();
+            }
+        }
+        textField->setText(scriptName);
+        if (menuControllerStaysInResponderChain) {
+            m_selectableTableView.selectCellAtLocation(m_selectableTableView.selectedColumn(), m_selectableTableView.selectedRow());
+            Container::activeApp()->setFirstResponder(&m_selectableTableView);
+        }
+        AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
+        return true;
     }
 
 }
