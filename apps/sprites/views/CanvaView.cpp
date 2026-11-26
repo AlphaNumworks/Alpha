@@ -1,6 +1,7 @@
 #include "CanvaView.hpp"
 #include "kandinsky/color.h"
 #include "kandinsky/rect.h"
+#include <escher/palette.h>
 
 namespace Sprites
 {
@@ -12,7 +13,7 @@ namespace Sprites
 
     void CanvaView::drawRect(KDContext * ctx, KDRect rect) const
     {
-        ctx->fillRect(rect, KDColorWhite);
+        ctx->fillRect(rect, Palette::GrayBright);
         for (size_t y = 0; y < k_pixelSize; ++y) {
             for (size_t x = 0; x < k_pixelSize; ++x) {
                 auto cuint = m_buff[y * k_pixelSize + x];
@@ -21,7 +22,9 @@ namespace Sprites
             }
         }
         // NOTE: To only draw bodrders
-        ctx->strokeRect(cellAt(m_x, m_y), KDColorBlack);
+        auto r = cellAt(m_x, m_y);
+        ctx->strokeRect(r, KDColorBlack);
+        ctx->strokeRect(KDRect(r.left() + 1, r.top() + 1, r.width() - 2, r.height() - 2), KDColorWhite);
     }
 
     void CanvaView::moveCursorByOffset(int offsetX, int offsetY)
