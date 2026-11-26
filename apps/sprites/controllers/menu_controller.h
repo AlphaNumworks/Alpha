@@ -2,6 +2,7 @@
     #define SPRITES_MENU_CONTROLLER_H
 
 #include "apps/sprites/controllers/cells/sprite_name_cell.h"
+#include "apps/sprites/controllers/sprite_editor_controller.hpp"
 #include "apps/sprites/controllers/sprite_parameter_controller.h"
 #include "apps/sprites/store/sprite_store.hpp"
 #include "escher/app.h"
@@ -105,6 +106,7 @@ namespace Sprites
 
             /* Sub controllers */
             SpriteParameterController m_paramController;
+            SpriteEditorController    m_editorController;
             void configureSprite();
             // SpriteEditorController    m_editorController;
 

@@ -71,6 +71,7 @@ namespace Sprites
                     return true;
                 }
                 assert(selectedColumn == 0);
+                editSpriteAtIndex(selectedRow);
                 return true;
             } else if (selectedColumn == 0 && selectedRow == m_spriteStore->NumberOfSprites()) {
                 addSprite();
@@ -294,7 +295,10 @@ namespace Sprites
 
     void MenuController::editSpriteAtIndex(size_t idx)
     {
-        // TODO: Do smth
+        assert(idx >= 0 && idx < m_spriteStore->NumberOfSprites());
+        Sprite s = m_spriteStore->spriteAtIdx(idx);
+        m_editorController.setSprite(s);
+        stackViewController()->push(&m_editorController);
     }
 
     void MenuController::configureSprite(void)

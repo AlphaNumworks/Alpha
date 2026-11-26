@@ -11,7 +11,7 @@ namespace Sprites
             static constexpr int k_pixelSize = 16;
             static constexpr int k_cellSize  = 13; // (222px // 16)
 
-            CanvaView() = default;
+            CanvaView();
 
             void drawRect(KDContext * ctx, KDRect rect) const override;
 

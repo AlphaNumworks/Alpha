@@ -5,8 +5,14 @@
 namespace Sprites
 {
 
+    CanvaView::CanvaView()
+    {
+
+    }
+
     void CanvaView::drawRect(KDContext * ctx, KDRect rect) const
     {
+        ctx->fillRect(rect, KDColorWhite);
         for (size_t y = 0; y < k_pixelSize; ++y) {
             for (size_t x = 0; x < k_pixelSize; ++x) {
                 ctx->fillRect(cellAt(x, y), KDColorWhite);
