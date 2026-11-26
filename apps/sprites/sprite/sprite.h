@@ -47,8 +47,8 @@ namespace Sprites
             size_t      width(void) const;
             size_t      height(void) const;
 
-            KDColor     getColorAt(size_t x, size_t y) const;
-            void        setColorAt(size_t x, size_t y, KDColor color);
+            uint8_t     getColorAt(size_t x, size_t y) const;
+            void        setColorAt(size_t x, size_t y, uint8_t color);
     };
 
 }

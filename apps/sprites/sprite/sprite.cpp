@@ -97,32 +97,29 @@ namespace Sprites
         return k_defaultSpriteHeight;
     }
 
-    KDColor Sprite::getColorAt(size_t x, size_t y) const
+    uint8_t Sprite::getColorAt(size_t x, size_t y) const
     {
         Data d = this->value();
 
-        size_t idx = (y * this->width() + x) * sizeof(uint16_t);
+        size_t idx = (y * this->width() + x) * sizeof(uint8_t);
 
         if (idx >= d.size) {
             return KDColor();
         }
-        return KDColor::RGB16(Ion::StorageHelper::unalignedShort((char *)d.buffer + idx));
+        return *(uint8_t *)((char *)d.buffer + idx);
     }
 
-    void Sprite::setColorAt(size_t x, size_t y, KDColor color)
+    void Sprite::setColorAt(size_t x, size_t y, uint8_t color)
     {
         // NOTE: No need to append things to record, the space should already be reserved uppon creation 
-        size_t idx = (y * this->width() + x) * sizeof(uint16_t);
+        size_t idx = (y * this->width() + x) * sizeof(uint8_t);
         Data d = this->value();
 
         if (idx >= d.size) {
-            // TODO: Return a status
             return;
         }
 
-        uint16_t c = color;
-
-        Ion::StorageHelper::writeUnalignedShort(c, (char *)d.buffer + idx);
+        *(uint8_t *)((char *)d.buffer + idx) = color;
     }
 
 }
