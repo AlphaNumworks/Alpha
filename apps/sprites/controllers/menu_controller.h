@@ -92,6 +92,10 @@ namespace Sprites
             EvenOddMessageTextCell  m_addNewSpriteCell;
             EvenOddCell             m_emptyCell;
 
+            /* Sub controllers */
+            // SpriteParameterController m_paramController;
+            // SpriteEditorController    m_editorController;
+
             /* Rand asf */
             SelectableTableView m_selectableTableView;
     };

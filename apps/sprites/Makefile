@@ -9,6 +9,7 @@ app_sprites_src = $(addprefix apps/sprites/,\
 	sprite/sprite.cpp \
 	\
 	controllers/menu_controller.cpp \
+	controllers/sprite_parameter_controller.cpp \
 	controllers/cells/sprite_name_cell.cpp \
 	\
 	store/sprite_store.cpp \
