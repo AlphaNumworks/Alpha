@@ -23,10 +23,10 @@ namespace Sprites
         // ButtonRowDelegate(nullptr, footer),
         m_spriteStore(store),
         m_selectableTableView(this, this, this, this),
-        m_paramController(nullptr, I18n::Message::ScriptOptions, this)
+        m_paramController(nullptr, I18n::Message::SpriteOptions, this)
     {
         m_selectableTableView.setMargins(0);
-        m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::Arrows);
+        m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
         // FIXME: Change for add sprite
         m_addNewSpriteCell.setMessage(I18n::Message::AddSprite);
         for (size_t i = 0; i < k_maxNumberOfDisplayableSpriteCells; ++i) {
@@ -101,7 +101,7 @@ namespace Sprites
     int MenuController::numberOfRows(void) const
     {
         // TODO: Return actual number of rows
-        return m_spriteStore->NumberOfSprites() + 1;  // Add sprite
+        return m_spriteStore->NumberOfSprites() + m_shouldDisplayAddSpriteRow;  // Add sprite
     }
 
     void MenuController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j)
