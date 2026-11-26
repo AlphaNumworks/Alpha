@@ -2,6 +2,7 @@
     #define SPRITES_MENU_CONTROLLER_H
 
 #include "apps/sprites/controllers/cells/sprite_name_cell.h"
+#include "apps/sprites/controllers/sprite_parameter_controller.h"
 #include "apps/sprites/store/sprite_store.hpp"
 #include "escher/app.h"
 #include "escher/button_row_controller.h"
@@ -92,12 +93,14 @@ namespace Sprites
             EvenOddMessageTextCell  m_addNewSpriteCell;
             EvenOddCell             m_emptyCell;
 
-            /* Sub controllers */
-            // SpriteParameterController m_paramController;
-            // SpriteEditorController    m_editorController;
-
             /* Rand asf */
             SelectableTableView m_selectableTableView;
+
+            /* Sub controllers */
+            SpriteParameterController m_paramController;
+            void configureSprite();
+            // SpriteEditorController    m_editorController;
+
     };
 
 }

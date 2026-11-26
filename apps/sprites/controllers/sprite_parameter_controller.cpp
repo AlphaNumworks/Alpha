@@ -39,9 +39,10 @@ namespace Sprites {
         return I18n::translate(m_pageTitle);
     }
 
-    bool SpriteParameterController::handleEvent(Ion::Events::Event event) {
+    bool SpriteParameterController::handleEvent(Ion::Events::Event event)
+    {
         if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-            Sprite s = m_Sprite;
+            // Sprite s = m_Sprite;
             switch (this->selectedRow()) {
             case 0:
                 dismissSpriteParameterController();
@@ -92,12 +93,12 @@ namespace Sprites {
 
     void SpriteParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) 
     {
-        if (cell == (HighlightCell *)&m_size) {
-            MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
-            GetSpriteSize(myCell);
-            myCell->setAccessoryFont(KDFont::SmallFont);
-            myCell->setAccessoryTextColor(Palette::SecondaryText);
-        }
+        // if (cell == (HighlightCell *)&m_size) {
+        //     MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)cell;
+        //     GetSpriteSize(myCell);
+        //     myCell->setAccessoryFont(KDFont::SmallFont);
+        //     myCell->setAccessoryTextColor(Palette::SecondaryText);
+        // }
     }
 
     void SpriteParameterController::GetSpriteSize(MessageTableCellWithBuffer* myCell)

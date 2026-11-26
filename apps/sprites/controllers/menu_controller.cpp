@@ -1,6 +1,7 @@
 #include "apps/sprites/controllers/menu_controller.h"
 #include "escher/button_row_controller.h"
 #include "escher/container.h"
+#include "escher/i18n.h"
 #include "escher/metric.h"
 #include "escher/responder.h"
 #include "escher/text_field.h"
@@ -18,7 +19,8 @@ namespace Sprites
         ViewController(parentResponder),
         // ButtonRowDelegate(nullptr, footer),
         m_spriteStore(store),
-        m_selectableTableView(this, this, this, this)
+        m_selectableTableView(this, this, this, this),
+        m_paramController(nullptr, I18n::Message::ScriptOptions, this)
     {
         m_selectableTableView.setMargins(0);
         m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::Arrows);
@@ -54,6 +56,7 @@ namespace Sprites
             int selectedColumn = m_selectableTableView.selectedColumn();
             if (selectedRow >= 0 && selectedRow < m_spriteStore->NumberOfSprites()) {
                 if (selectedColumn == 1) {
+                    this->configureSprite();
                     return true;
                 }
             }
@@ -272,6 +275,14 @@ namespace Sprites
     void MenuController::editSpriteAtIndex(size_t idx)
     {
         // TODO: Do smth
+    }
+
+    void MenuController::configureSprite(void)
+    {
+        assert(m_selectableTableView.selectedRow() >= 0);
+        assert(m_selectableTableView.selectedRow() < m_spriteStore->NumberOfSprites());
+        m_paramController.setSprite(m_spriteStore->spriteAtIdx(m_selectableTableView.selectedRow()));
+        stackViewController()->push(&m_paramController);
     }
 
 }
