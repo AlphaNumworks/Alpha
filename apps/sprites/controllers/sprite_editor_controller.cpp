@@ -31,6 +31,10 @@ namespace Sprites
             save();
             return false;
         }
+        if (evt == Ion::Events::Sto) {
+            save();
+            return true;
+        }
         if (evt == Ion::Events::OK || evt == Ion::Events::EXE) {
             m_buff[m_view.cursorY() * CanvaView::k_pixelSize + m_view.cursorX()] = m_actualColor;
             m_view.reloadOnCursor();
