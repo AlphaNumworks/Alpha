@@ -36,8 +36,12 @@ namespace Sprites
             return true;
         }
         if (evt == Ion::Events::OK || evt == Ion::Events::EXE) {
-            m_buff[m_view.cursorY() * CanvaView::k_pixelSize + m_view.cursorX()] = m_actualColor;
-            m_view.reloadOnCursor();
+            if (!m_inPalette) {
+                m_buff[m_view.cursorY() * CanvaView::k_pixelSize + m_view.cursorX()] = m_actualColor;
+                m_view.reloadOnCursor();
+            } else {
+                m_actualColor = m_view.color();
+            }
             return true;
         }
         if (evt == Ion::Events::Down) {
