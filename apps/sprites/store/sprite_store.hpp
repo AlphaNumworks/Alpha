@@ -52,7 +52,8 @@ namespace Sprites
             static Ion::Storage::Record::ErrorStatus AddNewSprite()
             {
                 uint8_t f[256] = {};
-                memset(f, (uint8_t)(0xFF), 256);
+                // NOTE:                 0b11111100 -> R(4)G(4)B(4)A(0)
+                memset(f, (uint8_t)(0xFC), 256);
                 return Ion::Storage::sharedStorage()->createRecordWithFullName(".spr", f, 256, true);
             }
 

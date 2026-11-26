@@ -16,11 +16,19 @@ namespace Sprites
         ctx->fillRect(rect, Palette::GrayBright);
         for (size_t y = 0; y < k_pixelSize; ++y) {
             for (size_t x = 0; x < k_pixelSize; ++x) {
-                auto cuint = m_buff[y * k_pixelSize + x];
-                KDColor clr = KDColor::RGB888((cuint >> 6) * 85, ((cuint >> 4) & 3) * 85, ((cuint >> 2) & 3) * 85);
-                ctx->fillRect(cellAt(x, y), clr);
+                uint8_t cuint = m_buff[y * k_pixelSize + x];
+                KDRect r = cellAt(x, y);
+                if ((cuint & 3) == 0) {
+                    constexpr KDCoordinate h = k_cellSize / 2;
+                    ctx->fillRect(r, KDColorWhite);
+                    ctx->fillRect(KDRect(r.x(), r.y(), h, h), Palette::GrayBright);
+                    ctx->fillRect(KDRect(r.x() + h, r.y() + h, h, h), Palette::GrayBright);
+                } else {
+                    ctx->fillRect(r, KDColor::RGB888((cuint >> 6) * 85, ((cuint >> 4) & 3) * 85, ((cuint >> 2) & 3) * 85));
+                }
             }
         }
+
         // NOTE: To only draw bodrders
         auto r = cellAt(m_x, m_y);
         ctx->strokeRect(r, KDColorBlack);
