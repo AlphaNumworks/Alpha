@@ -110,6 +110,8 @@ namespace Sprites
             assert(j >= 0 && j < m_spriteStore->NumberOfSprites());
             (static_cast<SpriteNameCell *>(cell))->textField()->setText(m_spriteStore->spriteAtIdx(j).fullName());
         }
+        static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
+        cell->setHighlighted(i == selectedColumn() && j == selectedRow());
     }
 
     KDCoordinate MenuController::columnWidth(int i)
