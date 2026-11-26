@@ -27,6 +27,10 @@ namespace Sprites
 
     bool SpriteEditorController::handleEvent(Ion::Events::Event evt)
     {
+        if (evt == Ion::Events::Back) {
+            save();
+            return false;
+        }
         if (evt == Ion::Events::OK || evt == Ion::Events::EXE) {
             m_buff[m_view.cursorY() * CanvaView::k_pixelSize + m_view.cursorX()] = m_actualColor;
             m_view.reloadOnCursor();
@@ -47,6 +51,13 @@ namespace Sprites
             return true;
         }
         return false;
+    }
+
+    void SpriteEditorController::save(void)
+    {
+        assert(!m_sprite.isNull());
+        Sprite::Data d = m_sprite.value();
+        memcpy((char *)d.buffer, m_buff, d.size);
     }
 
 }

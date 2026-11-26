@@ -22,6 +22,8 @@ namespace Sprites
             const char * title() override;
             bool         handleEvent(Ion::Events::Event evt) override;
 
+            void save(void);
+
         private:
             CanvaView m_view;
             Sprite    m_sprite;
