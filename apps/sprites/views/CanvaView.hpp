@@ -9,7 +9,7 @@ namespace Sprites
     {
         public:
             static constexpr int k_pixelSize = 16;
-            static constexpr int k_cellSize  = 13; // (222px // 16)
+            static constexpr int k_cellSize  = 12; // (222px // 16)
 
             CanvaView();
 
