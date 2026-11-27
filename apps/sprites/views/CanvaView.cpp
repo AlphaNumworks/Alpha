@@ -37,19 +37,23 @@ namespace Sprites
             }
         }
 
-        // TODO: Get some I18n messages for hints ... or mb no hints
-        const I18n::Message help[4] = {
+        const I18n::Message help[] = {
             I18n::Message::SpritesOkExe,
             I18n::Message::SpritesToolBox,
             I18n::Message::SpritesBackspace,
             I18n::Message::SpritesBack
         };
         for (int i = 0; i < 4; i++) {
-            ctx->drawString(I18n::translate(help[i]), KDPoint(k_paletteOffsetX, 130 + i * 16),
-                            KDFont::SmallFont, Palette::GrayDark, Palette::GrayBright);
+            ctx->drawString(
+                I18n::translate(help[i]),
+                KDPoint(k_paletteOffsetX, 130 + i * 16),
+                KDFont::SmallFont,
+                Palette::GrayDark,
+                Palette::GrayBright
+            );
         }
 
-        // NOTE: To only draw bodrders
+        // NOTE: Stroke only draws borders
         auto r = cellAt(m_x, m_y);
         ctx->strokeRect(r, KDColorBlack);
         ctx->strokeRect(KDRect(r.left() + 1, r.top() + 1, r.width() - 2, r.height() - 2), KDColorWhite);
