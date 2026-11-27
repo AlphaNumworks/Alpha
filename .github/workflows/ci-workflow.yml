@@ -341,7 +341,7 @@ jobs:
       - uses: actions/checkout@main
         with:
           submodules: 'recursive'
-      - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng git
+      - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-pythonmingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng git
       - run: make -j2 PLATFORM=simulator
       - run: make -j2 PLATFORM=simulator test.exe
       - run: cmd /c output\release\simulator\windows\test.exe --headless

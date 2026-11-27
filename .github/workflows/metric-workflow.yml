@@ -1,5 +1,9 @@
 name: Metrics
-on: [pull_request_target]
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   binary-size:
@@ -27,13 +31,16 @@ jobs:
         run: make -j2 -C head MODEL=n0110 epsilon.elf
       - name: Retrieve binary size analysis
         run: |
-          table="$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --custom 'Total (RAM)' .data .bss --custom 'Total (ROM)' .text .rodata .data --escape)"
+          table="$(python3 head/build/metrics/binary_size.py base/output/release/device/n0110/epsilon.elf head/output/release/device/n0110/epsilon.elf --labels Base Head --sections .text .rodata .bss .data --custom 'Total (RAM)' .data .bss --custom 'Total (ROM)' .text .rodata .data)"
           {
             echo 'table<<EOF'
-            echo "${table//%0A/$'\n'}"
+            echo "$table"
             echo EOF
           } >> "$GITHUB_ENV"
+      - name: Add size to job summary
+        run: echo "$table" >> "$GITHUB_STEP_SUMMARY"
       - name: Add comment
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v9
         with:
           script: |
@@ -41,5 +48,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
-              body: `${{ env.table }}`,
+              body: process.env.table,
             });
