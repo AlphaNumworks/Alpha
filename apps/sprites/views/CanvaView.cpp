@@ -1,4 +1,5 @@
 #include "CanvaView.hpp"
+#include <apps/i18n.h>
 #include "kandinsky/color.h"
 #include "kandinsky/rect.h"
 #include <escher/palette.h>
@@ -37,11 +38,16 @@ namespace Sprites
         }
 
         // TODO: Get some I18n messages for hints ... or mb no hints
-        // static constexpr const char * help[4] = {"OK: peindre", "TOOLBOX: palette", "SUPPR: effacer", "BACK: quitter"};
-        // for (int i = 0; i < 4; i++) {
-        //     ctx->drawString(help[i], KDPoint(k_paletteOffsetX, 130 + i * 16),
-        //                     KDFont::SmallFont, Palette::GrayDark, Palette::GrayBright);
-        // }
+        const I18n::Message help[4] = {
+            I18n::Message::SpritesOkExe,
+            I18n::Message::SpritesToolBox,
+            I18n::Message::SpritesBackspace,
+            I18n::Message::SpritesBack
+        };
+        for (int i = 0; i < 4; i++) {
+            ctx->drawString(I18n::translate(help[i]), KDPoint(k_paletteOffsetX, 130 + i * 16),
+                            KDFont::SmallFont, Palette::GrayDark, Palette::GrayBright);
+        }
 
         // NOTE: To only draw bodrders
         auto r = cellAt(m_x, m_y);
