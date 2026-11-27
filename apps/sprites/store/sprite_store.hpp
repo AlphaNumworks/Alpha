@@ -1,7 +1,7 @@
 #ifndef SPRITE_SCRIPT_STORE_H
     #define SPRITE_SCRIPT_STORE_H
     #include "apps/sprites/sprite/sprite.h"
-    #include "liba/include/string.h"
+    #include <string.h>
 
 namespace Sprites
 {

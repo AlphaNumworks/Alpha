@@ -1,5 +1,5 @@
 #include "sprite_editor_controller.hpp"
-#include "liba/include/string.h"
+#include <string.h>
 
 namespace Sprites
 {
