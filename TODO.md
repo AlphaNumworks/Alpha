@@ -14,11 +14,11 @@
     - [X] New records cannot be named the same as a locked record
     - [X] Records from official epsilon site having a auto lockv, and removing lockv on retrieving
 - [X] New theme
-- [ ] New DA / Logo / Name ?? (Alpha)
+- [x] New DA / Logo / Name ?? (Alpha)
+- [X] Sprite editor application
 - [ ] Custom application order AND hideable applications
 - [ ] Files application
 - [ ] Calendar application
-- [ ] Sprite editor application
 
 ## Website
 - [ ] A website (w/ github pages?)
