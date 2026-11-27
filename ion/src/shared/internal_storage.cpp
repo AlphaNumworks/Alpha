@@ -35,18 +35,23 @@ constexpr char InternalStorage::eqExtension[];
 const char * InternalStorage::Record::fullName() const {
   return Storage::sharedStorage()->fullNameOfRecord(*this);
 }
+
 InternalStorage::Record::ErrorStatus InternalStorage::Record::setBaseNameWithExtension(const char * baseName, const char * extension) {
   return Storage::sharedStorage()->setBaseNameWithExtensionOfRecord(*this, baseName, extension);
 }
+
 InternalStorage::Record::ErrorStatus InternalStorage::Record::setName(const char * fullName) {
   return Storage::sharedStorage()->setFullNameOfRecord(*this, fullName);
 }
+
 InternalStorage::Record::Data InternalStorage::Record::value() const {
   return Storage::sharedStorage()->valueOfRecord(*this);
 }
+
 InternalStorage::Record::ErrorStatus InternalStorage::Record::setValue(Data data) {
   return Storage::sharedStorage()->setValueOfRecord(*this, data);
 }
+
 void InternalStorage::Record::destroy() {
   return Storage::sharedStorage()->destroyRecord(*this);
 }
