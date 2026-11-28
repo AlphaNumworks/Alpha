@@ -61,8 +61,24 @@ ifeq ("$(PLATFORM)", "device")
   SFLAGS += -DPLATFORM_DEVICE
   ifeq ("$(MODEL)", "n0100")
     SFLAGS += -DDEVICE_N0100
-  else
+  endif
+  ifeq ("$(MODEL)", "n0110")
     SFLAGS += -DDEVICE_N0110
+  endif
+  ifeq ("$(MODEL)", "bootloader")
+    SFLAGS += -DDEVICE_N0110
+  endif
+  ifeq ("$(MODEL)", "n0115")
+    SFLAGS += -DDEVICE_N0115
+  endif
+  # USB bcdDevice reported in DFU mode: lets the official updater tell an N0110
+  # from an N0115 (it falls back to "N0110" on 0x0100). Applies to the bare
+  # firmware, the bootloader and the slot firmwares (MODEL=n01xx-bootloader).
+  ifneq ($(filter $(MODEL),n0110 n0110-bootloader bootloader),)
+    SFLAGS += -DION_USB_BCD_DEVICE=0x0110
+  endif
+  ifneq ($(filter $(MODEL),n0115 n0115-bootloader),)
+    SFLAGS += -DION_USB_BCD_DEVICE=0x0115
   endif
 endif
 
