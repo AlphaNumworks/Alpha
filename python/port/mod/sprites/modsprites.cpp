@@ -25,16 +25,20 @@ mp_obj_t modsprites_draw_sprite(mp_obj_t nameo, mp_obj_t xo, mp_obj_t yo)
     int x = mp_obj_get_int(xo);
     int y = mp_obj_get_int(yo);
 
-    // TODO: Draw the sprite 16x16
     // NOTE: memcpy into a KDColor get a 2 sprites cause sizeof(uint16_t) == 2
     Sprites::Sprite::Data d = s.value();
 
-    // FIXME: One set px per pixel is a little bit slowww
     // FIXME: Constants and scale ??
+    KDRect rect(x, y, 16, 16);
     MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
+    KDColor pixels[256];
+
     for (size_t i = 0; i < 256; ++i) {
-        KDIonContext::sharedContext()->setPixel(KDPoint(x + (i % 16), y + (i / 16)), Sprites::CanvaView::toKDColor(((uint8_t *)d.buffer)[i]));
+        pixels[i] = Sprites::CanvaView::toKDColor(((uint8_t *)d.buffer)[i]);
+        // KDIonContext::sharedContext()->setPixel(KDPoint(x + (i % 16), y + (i / 16)), Sprites::CanvaView::toKDColor(((uint8_t *)d.buffer)[i]));
     }
+
+    KDIonContext::sharedContext()->fillRectWithPixels(rect, pixels, nullptr);
 
     return mp_const_none;
 }
