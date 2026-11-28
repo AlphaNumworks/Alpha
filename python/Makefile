@@ -188,6 +188,9 @@ port_src += $(addprefix python/port/,\
   mod/alpha/events/bus/modalpha_eventbus.cpp \
   mod/alpha/events/bus/modalpha_eventbus_table.c \
   \
+  mod/sprites/modsprites.cpp \
+  mod/sprites/modsprites_table.c \
+  \
   mphalport.c \
 )
 

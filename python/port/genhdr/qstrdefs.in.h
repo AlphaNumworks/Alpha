@@ -578,6 +578,10 @@ Q(dispatch)
 Q(subscribe)
 Q(priority)
 
+// Sprites QSTRs
+Q(Sprites)
+Q(draw_sprite)
+
 // utime QSTRs
 Q(localtime)
 Q(mktime)

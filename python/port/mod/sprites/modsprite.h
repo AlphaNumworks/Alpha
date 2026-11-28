@@ -1,5 +1,8 @@
 #pragma once
 
+#include <py/obj.h>
+
+
 /**
  * This a dedicated module for drawing sprites
  * 
@@ -21,3 +24,6 @@
  *      But we are not sure that the pixels will not be moved in memory...
  *      So maybe the first way is safest but slower...
  */
+
+// NOTE: For now its the first way tho
+mp_obj_t modsprites_draw_sprite(mp_obj_t spr, mp_obj_t x, mp_obj_t y);
