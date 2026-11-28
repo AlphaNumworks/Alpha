@@ -69,6 +69,10 @@ extern const struct _mp_obj_module_t modalpha_module;
 #undef MODULE_DEF_MP_QSTR_ALPHA
 #define MODULE_DEF_MP_QSTR_ALPHA { MP_ROM_QSTR(MP_QSTR_alpha), MP_ROM_PTR(&modalpha_module) },
 
+extern const struct _mp_obj_module_t modsprites_module;
+#undef MODULE_DEF_MP_QSTR_SPRITES
+#define MODULE_DEF_MP_QSTR_SPRITES { MP_ROM_QSTR(MP_QSTR_sprites), MP_ROM_PTR(&modsprites_module) },
+
 #if !defined(INCLUDE_ULAB)
 
 #define MICROPY_REGISTERED_MODULES \
@@ -85,7 +89,8 @@ extern const struct _mp_obj_module_t modalpha_module;
     MODULE_DEF_MP_QSTR_TIME \
     MODULE_DEF_MP_QSTR_OS \
     MODULE_DEF_MP_QSTR_TURTLE \
-    MODULE_DEF_MP_QSTR_ALPHA
+    MODULE_DEF_MP_QSTR_ALPHA \
+    MODULE_DEF_MP_QSTR_SPRITES
 #else
 extern const struct _mp_obj_module_t ulab_user_cmodule;
 #undef MODULE_DEF_MP_QSTR_ULAB
@@ -106,6 +111,7 @@ extern const struct _mp_obj_module_t ulab_user_cmodule;
     MODULE_DEF_MP_QSTR_OS \
     MODULE_DEF_MP_QSTR_TURTLE \
     MODULE_DEF_MP_QSTR_ALPHA \
+    MODULE_DEF_MP_QSTR_SPRITES \
     MODULE_DEF_MP_QSTR_ULAB
 #endif
 // MICROPY_REGISTERED_MODULES

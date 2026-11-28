@@ -579,7 +579,7 @@ Q(subscribe)
 Q(priority)
 
 // Sprites QSTRs
-Q(Sprites)
+Q(sprites)
 Q(draw_sprite)
 
 // utime QSTRs

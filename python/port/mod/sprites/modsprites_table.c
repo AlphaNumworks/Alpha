@@ -4,7 +4,7 @@
 static MP_DEFINE_CONST_FUN_OBJ_3(modsprites_draw_sprite_obj, modsprites_draw_sprite);
 
 static const mp_rom_map_elem_t modsprites_module_globals_table[] = {
-  { MP_ROM_QSTR(MP_QSTR___name__),       MP_ROM_QSTR(MP_QSTR_kandinsky) },
+  { MP_ROM_QSTR(MP_QSTR___name__),       MP_ROM_QSTR(MP_QSTR_sprites) },
   { MP_ROM_QSTR(MP_QSTR_draw_sprite),    MP_ROM_PTR(&modsprites_draw_sprite_obj) },
 };
 
