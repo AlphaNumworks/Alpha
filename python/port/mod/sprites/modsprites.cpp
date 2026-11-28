@@ -29,6 +29,8 @@ mp_obj_t modsprites_draw_sprite(mp_obj_t nameo, mp_obj_t xo, mp_obj_t yo)
     // NOTE: memcpy into a KDColor get a 2 sprites cause sizeof(uint16_t) == 2
     Sprites::Sprite::Data d = s.value();
 
+    // FIXME: One set px per pixel is a little bit slowww
+    // FIXME: Constants and scale ??
     MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
     for (size_t i = 0; i < 256; ++i) {
         KDIonContext::sharedContext()->setPixel(KDPoint(x + (i % 16), y + (i / 16)), Sprites::CanvaView::toKDColor(((uint8_t *)d.buffer)[i]));
